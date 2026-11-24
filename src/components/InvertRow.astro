@@ -1,0 +1,98 @@
+---
+/** Index row: fill rises from the bottom on hover, text inverts, arrow shifts. */
+interface Props {
+  index: string;
+  title: string;
+  meta?: string;
+  href?: string;
+}
+const { index, title, meta, href } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag class="row" href={href}>
+  <span class="row-main">
+    <span class="row-index mono">{index}</span>
+    <span class="row-title">{title}</span>
+  </span>
+  <span class="row-side">
+    {meta && <span class="row-meta mono">{meta}</span>}
+    {href && <span class="row-arrow" aria-hidden="true">↗</span>}
+  </span>
+</Tag>
+
+<style>
+  .row {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: clamp(1.5rem, 2.5vw, 2.25rem) clamp(1rem, 1.5vw, 1.5rem);
+    border-bottom: var(--hairline);
+    color: var(--fg);
+    text-decoration: none;
+    isolation: isolate;
+    transition: color var(--dur-base) ease;
+  }
+  @media (min-width: 640px) {
+    .row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  .row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--fg);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.42s var(--ease-out-expo);
+  }
+  a.row:hover,
+  a.row:focus-visible {
+    color: var(--bg);
+  }
+  a.row:hover::before,
+  a.row:focus-visible::before {
+    transform: scaleY(1);
+  }
+  .row-main {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-5);
+  }
+  .row-index,
+  .row-meta {
+    color: var(--muted);
+    transition: color var(--dur-base) ease;
+  }
+  a.row:hover .row-index,
+  a.row:hover .row-meta {
+    color: color-mix(in srgb, var(--bg) 70%, var(--fg));
+  }
+  .row-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1;
+  }
+  .row-side {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+  }
+  .row-arrow {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  a.row:hover .row-arrow {
+    transform: translate(6px, -6px);
+  }
+</style>

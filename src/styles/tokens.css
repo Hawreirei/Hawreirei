@@ -1,0 +1,84 @@
+/*
+ * VOID / 01 — design tokens (issue #3)
+ * Grayscale only. Two themes: white and "void" (black).
+ * Set on <html data-theme="light|dark"> by the inline script in BaseLayout:
+ * saved choice → device prefers-color-scheme → white.
+ */
+
+:root,
+:root[data-theme='light'] {
+  --bg: #ffffff;
+  --surface: #f5f5f5;
+  --elevated: #ebebeb;
+  --border: #dddddd;
+  --muted: #6e6e6e; /* 5.1:1 on white, 4.7:1 on surface — WCAG AA */
+  --fg: #000000;
+
+  --grain-opacity: 0.05;
+  --hairline-alpha: 6%;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --elevated: #141414;
+  --border: #222222;
+  --muted: #888888; /* 5.9:1 on black — WCAG AA */
+  --fg: #ffffff;
+
+  --grain-opacity: 0.045;
+  --hairline-alpha: 3.5%;
+  color-scheme: dark;
+}
+
+:root {
+  /* Typography */
+  --font-display: 'Syne Variable', 'Space Grotesk Variable', system-ui, sans-serif;
+  --font-sans: 'Space Grotesk Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --tracking-brutal: -0.05em;
+  --tracking-tightest: -0.035em;
+  --tracking-tight: -0.015em;
+  --tracking-label: 0.2em;
+  --tracking-wide: 0.28em;
+
+  /* Fluid type scale */
+  --text-label: 0.6875rem; /* 11px mono labels */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.0625rem, 0.95rem + 0.4vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1rem + 0.9vw, 1.75rem);
+  --text-2xl: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+  --text-3xl: clamp(2.25rem, 1.4rem + 3.4vw, 4.5rem);
+  --text-4xl: clamp(3rem, 1.6rem + 5.8vw, 6.5rem);
+  --text-hero: clamp(3.5rem, 13.5vw, 15rem);
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 9rem;
+  --section-y: clamp(6rem, 4rem + 8vw, 9rem);
+  --gutter: clamp(1.25rem, 3.5vw, 3rem);
+  --max-width: 1800px;
+
+  /* Shape & depth */
+  --radius: 2px;
+  --hairline: 1px solid var(--border);
+  --shadow-float: 0 30px 70px -20px color-mix(in srgb, var(--fg) 12%, transparent);
+
+  /* Motion (used by #4) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.2s;
+  --dur-base: 0.4s;
+  --dur-slow: 0.9s;
+}

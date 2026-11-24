@@ -1,5 +1,9 @@
 ---
+import '@fontsource-variable/syne';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { languages, type Lang } from '../i18n/ui';
 import { langs, useTranslations, switchLangPath, localizedPath } from '../i18n/utils';
 
@@ -7,9 +11,10 @@ interface Props {
   lang: Lang;
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, title, description, noindex = false } = Astro.props;
 const t = useTranslations(lang);
 const otherLang: Lang = lang === 'id' ? 'en' : 'id';
 const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
@@ -18,12 +23,13 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={new URL(Astro.url.pathname, site)} />
     {
       langs.map((l) => (
@@ -31,31 +37,55 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
       ))
     }
     <link rel="alternate" hreflang="x-default" href={new URL(switchLangPath(Astro.url, 'id'), site)} />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      // Theme before first paint: saved choice → device setting → white.
+      try {
+        var saved = localStorage.getItem('theme');
+        var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.dataset.theme = 'dark';
+      } catch (e) {}
+    </script>
   </head>
   <body>
-    <a class="skip-link" href="#main">{lang === 'id' ? 'Langsung ke konten' : 'Skip to content'}</a>
+    <a class="skip-link" href="#main">{t('skip')}</a>
+    <div class="hairlines" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
 
-    <header class="site-header wrap">
-      <a class="brand" href={localizedPath(lang)}>Itman Arif Hariri</a>
-      <a
-        class="lang-switch mono"
-        href={switchLangPath(Astro.url, otherLang)}
-        hreflang={otherLang}
-        lang={otherLang}
-        data-lang={otherLang}
-      >
-        {otherLang.toUpperCase()} · {languages[otherLang]}
-      </a>
+    <!-- Temporary header — full telemetry header + MENU overlay come in issue #5 -->
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand mono" href={localizedPath(lang)}>
+          <span class="brand-mark" aria-hidden="true"></span>
+          Itman Arif Hariri
+        </a>
+        <div class="header-actions">
+          <ThemeToggle lang={lang} />
+          <a
+            class="lang-switch mono"
+            href={switchLangPath(Astro.url, otherLang)}
+            hreflang={otherLang}
+            lang={otherLang}
+            data-lang={otherLang}
+            title={languages[otherLang]}
+          >
+            {otherLang.toUpperCase()}
+          </a>
+        </div>
+      </div>
     </header>
 
     <main id="main">
       <slot />
     </main>
 
-    <footer class="site-footer wrap">
-      <span class="mono">© {new Date().getFullYear()} Itman Arif Hariri</span>
-      <span class="mono">{t('status.skeleton')}</span>
+    <footer class="site-footer">
+      <div class="container footer-row label">
+        <span>© {new Date().getFullYear()} Itman Arif Hariri</span>
+        <span>{t('status.skeleton')}</span>
+      </div>
     </footer>
 
     <script>
@@ -72,35 +102,69 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
 </html>
 
 <style>
-  .site-header,
-  .site-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding-block: 1.25rem;
-  }
   .site-header {
-    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: var(--hairline);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
-  .site-footer {
-    border-top: 1px solid var(--line);
-    color: var(--muted);
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: clamp(3.5rem, 3rem + 1vw, 4rem);
   }
   .brand {
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 700;
+    letter-spacing: 0.25em;
     text-decoration: none;
-    font-size: 1.125rem;
+  }
+  .brand-mark {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--fg);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .brand:hover .brand-mark {
+    transform: rotate(45deg);
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
   }
   .lang-switch {
-    text-decoration: none;
-    border: 1px solid var(--fg);
     padding: 0.4rem 0.75rem;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      border-color var(--dur-base) ease;
   }
   .lang-switch:hover {
     background: var(--fg);
     color: var(--bg);
+    border-color: var(--fg);
+  }
+  .footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+  }
+  @media (max-width: 420px) {
+    .brand {
+      letter-spacing: 0.12em;
+    }
   }
 </style>

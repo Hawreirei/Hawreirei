@@ -26,6 +26,12 @@ export const ui = {
     'home.door.resources': 'Sumber belajar gratis',
     'home.door.resources.desc': 'Lembar kerja & bank soal',
     'status.skeleton': 'Kerangka situs — konten sementara',
+    'theme.toggle': 'Ganti tema terang / gelap',
+    'theme.light': 'Terang',
+    'theme.dark': 'Gelap',
+    'copy.copy': 'Salin',
+    'copy.copied': 'Tersalin ✓',
+    'skip': 'Langsung ke konten',
   },
   en: {
     'site.title': 'Itman Arif Hariri — Math Teacher',
@@ -46,6 +52,12 @@ export const ui = {
     'home.door.resources': 'Free resources',
     'home.door.resources.desc': 'Worksheets & question bank',
     'status.skeleton': 'Site skeleton — placeholder content',
+    'theme.toggle': 'Switch light / dark theme',
+    'theme.light': 'Light',
+    'theme.dark': 'Void',
+    'copy.copy': 'Copy',
+    'copy.copied': 'Copied ✓',
+    'skip': 'Skip to content',
   },
 } as const;
 

@@ -1,0 +1,20 @@
+---
+/** `[ 001 — SECTION NAME ]` mono label. */
+interface Props {
+  index?: string;
+  text: string;
+  as?: 'p' | 'span' | 'div';
+  class?: string;
+}
+const { index, text, as: Tag = 'p', class: className } = Astro.props;
+---
+
+<Tag class:list={['label', 'bracket', className]}>
+  [ {index && <>{index} — </>}{text} ]
+</Tag>
+
+<style>
+  .bracket {
+    letter-spacing: var(--tracking-wide);
+  }
+</style>

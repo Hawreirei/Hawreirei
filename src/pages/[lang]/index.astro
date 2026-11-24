@@ -19,13 +19,13 @@ const doors = [
 ---
 
 <BaseLayout lang={lang}>
-  <section class="hero wrap">
-    <p class="mono">{t('home.role')} — 01</p>
-    <h1>Itman<br />Arif<br />Hariri</h1>
-    <p class="mission">{t('home.mission')}</p>
+  <section class="hero container">
+    <p class="label">[ 000 — {t('home.role')} ]</p>
+    <h1 class="display display-hero">Itman<br /><span class="outline">Arif</span><br />Hariri</h1>
+    <p class="mission lead muted">{t('home.mission')}</p>
   </section>
 
-  <section class="doors wrap" aria-label={lang === 'id' ? 'Tiga pintu' : 'Three doors'}>
+  <section class="doors container" aria-label={lang === 'id' ? 'Tiga pintu' : 'Three doors'}>
     {
       doors.map((d) => (
         <a class="door" href={localizedPath(lang, d.path)}>
@@ -42,18 +42,11 @@ const doors = [
   .hero {
     padding-block: clamp(3rem, 10vw, 8rem) clamp(2rem, 6vw, 4rem);
   }
-  h1 {
-    font-size: clamp(3.5rem, 16vw, 13rem);
-    line-height: 0.88;
-    letter-spacing: -0.05em;
-    font-weight: 900;
-    margin: 1rem 0;
-    text-transform: uppercase;
+  .hero h1 {
+    margin-block: var(--space-5);
   }
   .mission {
     max-width: 34ch;
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
-    color: var(--muted);
   }
   .doors {
     display: grid;
@@ -66,14 +59,18 @@ const doors = [
     flex-direction: column;
     gap: 0.5rem;
     padding: 1.5rem;
-    border: 1px solid var(--fg);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: var(--surface);
     text-decoration: none;
     min-height: 11rem;
     transition: background 0.2s, color 0.2s;
   }
   .door strong {
-    font-size: 1.6rem;
-    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-tight);
     margin-top: auto;
   }
   .door .desc {
@@ -82,6 +79,7 @@ const doors = [
   .door:hover {
     background: var(--fg);
     color: var(--bg);
+    border-color: var(--fg);
   }
   .door:hover .desc {
     color: inherit;

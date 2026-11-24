@@ -1,0 +1,33 @@
+---
+/** 3 / 6 / 3 section header: bracket label · big heading · mono note. */
+import BracketLabel from './BracketLabel.astro';
+
+interface Props {
+  index: string;
+  label: string;
+  note?: string;
+  id?: string;
+}
+const { index, label, note, id } = Astro.props;
+---
+
+<header class="section-header g12">
+  <div style="--span: 3"><BracketLabel index={index} text={label} /></div>
+  <h2 class="h2" id={id} style="--span: 6"><slot /></h2>
+  {note && <p class="label sh-note" style="--span: 3">{note}</p>}
+</header>
+
+<style>
+  .section-header {
+    align-items: end;
+    row-gap: var(--space-4);
+    padding-bottom: clamp(3rem, 6vw, 6rem);
+    border-bottom: var(--hairline);
+  }
+  @media (min-width: 1024px) {
+    .sh-note {
+      text-align: right;
+      line-height: 1.8;
+    }
+  }
+</style>

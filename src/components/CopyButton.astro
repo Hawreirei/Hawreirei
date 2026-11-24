@@ -1,0 +1,90 @@
+---
+/** Copy-to-clipboard button with a COPY → COPIED ✓ badge. */
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  value: string;
+  lang: Lang;
+  display?: string;
+}
+const { value, lang, display } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<button type="button" class="copy" data-copy={value} data-copied={t('copy.copied')} data-label={t('copy.copy')}>
+  <span class="copy-text">{display ?? value}</span>
+  <span class="copy-badge mono" aria-live="polite">{t('copy.copy')}</span>
+</button>
+
+<style>
+  .copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-5);
+    max-width: 100%;
+    padding: 1.15rem clamp(1.25rem, 2vw, 2rem);
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: var(--fg);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      border-color var(--dur-base) ease;
+  }
+  .copy:hover,
+  .copy.is-copied {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .copy-text {
+    font-family: var(--font-mono);
+    font-size: clamp(0.875rem, 0.75rem + 0.6vw, 1.25rem);
+    letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+  .copy-badge {
+    flex-shrink: 0;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid currentColor;
+    font-size: 0.625rem;
+  }
+</style>
+
+<script>
+  async function copy(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('button[data-copy]').forEach((btn) => {
+    const badge = btn.querySelector('.copy-badge');
+    let timer: number | undefined;
+    btn.addEventListener('click', async () => {
+      if (!(await copy(btn.dataset.copy ?? ''))) return;
+      btn.classList.add('is-copied');
+      if (badge) badge.textContent = btn.dataset.copied ?? '';
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        btn.classList.remove('is-copied');
+        if (badge) badge.textContent = btn.dataset.label ?? '';
+      }, 2200);
+    });
+  });
+</script>

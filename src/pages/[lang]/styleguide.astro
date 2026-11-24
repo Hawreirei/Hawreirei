@@ -1,0 +1,325 @@
+---
+/**
+ * VOID / 01 style preview (issue #3). Not linked from the site; noindex.
+ * Everything here is sample content for reviewing the design system.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BracketLabel from '../../components/BracketLabel.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Button from '../../components/Button.astro';
+import Card from '../../components/Card.astro';
+import StatsStrip from '../../components/StatsStrip.astro';
+import InvertRow from '../../components/InvertRow.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import type { Lang } from '../../i18n/ui';
+import { langs } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const id = lang === 'id';
+
+const swatches = [
+  { token: '--bg', light: '#FFFFFF', dark: '#000000' },
+  { token: '--surface', light: '#F5F5F5', dark: '#0A0A0A' },
+  { token: '--elevated', light: '#EBEBEB', dark: '#141414' },
+  { token: '--border', light: '#DDDDDD', dark: '#222222' },
+  { token: '--muted', light: '#6E6E6E', dark: '#888888' },
+  { token: '--fg', light: '#000000', dark: '#FFFFFF' },
+];
+
+const programmes = [
+  { title: 'Primary', meta: id ? 'SD · Dasar' : 'Primary school' },
+  { title: 'Pearson Edexcel', meta: 'iPrimary · iLowerSecondary · IGCSE' },
+  { title: id ? 'Achievement Test' : 'Achievement Tests', meta: 'Pearson' },
+  { title: 'TKA · UTBK · CASN', meta: id ? 'Persiapan ujian' : 'Exam prep' },
+  { title: id ? 'Olimpiade' : 'Olympiad', meta: 'OSN · KSN' },
+];
+---
+
+<BaseLayout lang={lang} title="Style guide" noindex>
+  <!-- 000 · Intro -->
+  <section class="section">
+    <div class="container stack" style="--stack: 1.5rem">
+      <BracketLabel index="000" text="VOID / 01 — Design system" />
+      <h1 class="display display-hero">
+        Void<br /><span class="outline">/ 01</span>
+      </h1>
+      <p class="lead muted" style="max-width: 46ch">
+        {
+          id
+            ? 'Pratinjau sistem desain: warna, tipografi, grid, tekstur, dan komponen dasar. Semua isi di halaman ini hanya contoh.'
+            : 'Design system preview: colour, typography, grid, textures and base components. Everything on this page is sample content.'
+        }
+      </p>
+    </div>
+  </section>
+
+  <!-- 001 · Colour -->
+  <section class="section">
+    <div class="container">
+      <SectionHeader index="001" label={id ? 'Warna' : 'Colour'} note={id ? 'Hanya skala abu-abu' : 'Grayscale only'}>
+        {id ? 'Hitam, putih, abu-abu.' : 'Black, white, gray.'}
+      </SectionHeader>
+      <div class="swatches">
+        {
+          swatches.map((s) => (
+            <div class="swatch">
+              <span class="chip" style={`background: var(${s.token})`} />
+              <span class="mono">{s.token}</span>
+              <span class="label">
+                {id ? 'Terang' : 'Light'} {s.light} · Void {s.dark}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 002 · Typography -->
+  <section class="section">
+    <div class="container">
+      <SectionHeader index="002" label={id ? 'Tipografi' : 'Typography'} note="Syne · Space Grotesk · JetBrains Mono">
+        {id ? 'Huruf monumental.' : 'Monumental type.'}
+      </SectionHeader>
+
+      <div class="type-specimens">
+        <div class="specimen">
+          <p class="label">Display / Syne 800 / −0.05em</p>
+          <p class="display display-hero">Itman</p>
+          <p class="display display-hero outline">Arif</p>
+        </div>
+        <div class="specimen">
+          <p class="label">H2 / Syne 700</p>
+          <p class="h2">{id ? 'Dari “tidak bisa” ke “bisa membuktikan”.' : 'From “I can’t” to “I can prove it”.'}</p>
+        </div>
+        <div class="specimen">
+          <p class="label">H3 / Syne 700</p>
+          <p class="h3">Pearson Edexcel</p>
+        </div>
+        <div class="specimen">
+          <p class="label">Lead / Space Grotesk 300</p>
+          <p class="lead" style="max-width: 52ch">
+            {
+              id
+                ? 'Saya membangun pemahaman konsep terlebih dahulu, lalu kelancaran prosedur — agar siswa tahu mengapa, bukan hanya bagaimana.'
+                : 'I build conceptual understanding first, then procedural fluency — so students know why, not just how.'
+            }
+          </p>
+        </div>
+        <div class="specimen">
+          <p class="label">Body / Space Grotesk 400</p>
+          <p style="max-width: 62ch">
+            {
+              id
+                ? 'Teks isi dibuat tenang dan mudah dibaca untuk orang tua, kepala sekolah, dan siswa. Drama ada di judul, bukan di materi pelajaran.'
+                : 'Body text stays calm and readable for parents, principals and students. The drama lives in the headings, not in the lesson content.'
+            }
+          </p>
+        </div>
+        <div class="specimen">
+          <p class="label">Mono label / JetBrains Mono / 0.2em</p>
+          <p class="mono">Edition 2026 // Portfolio · (x, y) = (0420, 0128)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 003 · Grid -->
+  <section class="section">
+    <div class="container">
+      <SectionHeader index="003" label="Grid" note={id ? '12 kolom · asimetris' : '12 columns · asymmetric'}>
+        {id ? 'Grid asimetris.' : 'Asymmetric grid.'}
+      </SectionHeader>
+      <div class="g12 grid-demo">
+        <div class="block" style="--span: 7"><span class="mono">span 7</span></div>
+        <div class="block" style="--span: 5; --drop: 9rem"><span class="mono">span 5 · drop 9rem</span></div>
+        <div class="block" style="--span: 5; --start: 2"><span class="mono">span 5 · start 2</span></div>
+        <div class="block" style="--span: 6; --drop: 6rem"><span class="mono">span 6 · drop 6rem</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 004 · Components -->
+  <section class="section">
+    <div class="container">
+      <SectionHeader index="004" label={id ? 'Komponen' : 'Components'} note={id ? 'Efek gerak menyusul di #4' : 'Motion effects follow in #4'}>
+        {id ? 'Blok dasar.' : 'Building blocks.'}
+      </SectionHeader>
+
+      <div class="comp">
+        <p class="label">Buttons</p>
+        <div class="row-wrap">
+          <Button>{id ? 'Kontak' : 'Contact'}</Button>
+          <Button variant="solid">{id ? 'Unduh CV' : 'Download CV'} ↓</Button>
+          <Button size="lg">WhatsApp ↗</Button>
+          <Button size="sm">Menu</Button>
+        </div>
+      </div>
+
+      <div class="comp">
+        <p class="label">{id ? 'Kartu melayang' : 'Floating cards'}</p>
+        <div class="g12">
+          <div style="--span: 7">
+            <Card index="001" title={id ? 'Rekrut saya' : 'Hire me'} meta={id ? 'Untuk sekolah' : 'For schools'} tags="CV / LESSONS" tag={id ? 'Buka' : 'Open'}>
+              <svg slot="visual" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <g fill="none" stroke="currentColor" stroke-width="0.4" opacity="0.18">
+                  {Array.from({ length: 17 }, (_, i) => <line x1={i * 10} y1="0" x2={i * 10} y2="100" />)}
+                  {Array.from({ length: 11 }, (_, i) => <line x1="0" y1={i * 10} x2="160" y2={i * 10} />)}
+                </g>
+                <g fill="none" stroke="currentColor" transform="translate(80 50)">
+                  {[1, 2, 3, 4, 5, 6].map((k) => (
+                    <rect x={-k * 6} y={-k * 6} width={k * 12} height={k * 12} stroke-width={k === 4 ? 0.9 : 0.4} opacity={0.25 + k * 0.1} transform={`rotate(${k * 9})`} />
+                  ))}
+                </g>
+              </svg>
+              {id ? 'Rencana pelajaran terbaik, contoh asesmen, dan CV untuk kepala sekolah.' : 'Best lesson plans, assessment samples and CV for principals.'}
+            </Card>
+          </div>
+          <div style="--span: 5; --drop: 9rem">
+            <Card index="002" title={id ? 'Belajar' : 'Learn'} meta="Les privat" tags="5 PROGRAMMES" ratio="1 / 1" tag={id ? 'Buka' : 'Open'}>
+              <svg slot="visual" viewBox="-1.2 -1.2 2.4 2.4" aria-hidden="true">
+                <line x1="-1.2" y1="0" x2="1.2" y2="0" stroke="currentColor" stroke-width="0.006" opacity="0.2" />
+                <line x1="0" y1="-1.2" x2="0" y2="1.2" stroke="currentColor" stroke-width="0.006" opacity="0.2" />
+                {[0, 1, 2].map((layer) => (
+                  <polyline
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width={layer === 0 ? 0.012 : 0.006}
+                    opacity={layer === 0 ? 1 : 0.35 - layer * 0.1}
+                    points={Array.from({ length: 361 }, (_, i) => {
+                      const a = (i / 360) * Math.PI * 2;
+                      const s = 0.9 * (1 - layer * 0.12);
+                      return `${(Math.sin(3 * a + layer * 0.45) * s).toFixed(3)},${(Math.sin(4 * a) * s).toFixed(3)}`;
+                    }).join(' ')}
+                  />
+                ))}
+              </svg>
+              {id ? 'Kurva Lissajous: x = sin 3t, y = sin 4t.' : 'Lissajous curve: x = sin 3t, y = sin 4t.'}
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp">
+        <p class="label">{id ? 'Baris indeks (hover)' : 'Index rows (hover)'}</p>
+        <div class="rows">
+          {programmes.map((p, i) => <InvertRow index={String(i + 1).padStart(2, '0')} title={p.title} meta={p.meta} href="#" />)}
+        </div>
+      </div>
+
+      <div class="comp g12">
+        <div style="--span: 5">
+          <p class="label" style="margin-bottom: 1rem">Stats strip</p>
+          <StatsStrip
+            items={[
+              { value: '00', label: id ? 'Tahun mengajar' : 'Years teaching' },
+              { value: '000', unit: '+', label: id ? 'Siswa' : 'Students' },
+              { value: '00', label: id ? 'Medali olimpiade' : 'Olympiad medals' },
+            ]}
+          />
+          <p class="label" style="margin-top: 0.75rem">{id ? '* Angka asli dari Anda nanti' : '* Your real numbers later'}</p>
+        </div>
+        <div style="--span: 6; --start: 7">
+          <p class="label" style="margin-bottom: 1rem">Copy email</p>
+          <CopyButton value="arifhariri2@gmail.com" lang={lang} />
+        </div>
+      </div>
+
+      <div class="comp">
+        <p class="label">Bracket labels</p>
+        <div class="row-wrap">
+          <BracketLabel index="001" text={id ? 'Pelajaran pilihan' : 'Selected lessons'} />
+          <BracketLabel index="002" text={id ? 'Filosofi' : 'Philosophy'} />
+          <BracketLabel text={id ? 'Soal minggu ini' : 'Problem of the week'} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 005 · Texture -->
+  <section class="section texture-demo">
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="container stack">
+      <BracketLabel index="005" text={id ? 'Tekstur' : 'Texture'} />
+      <p class="h2">{id ? 'Garis rambut · grain · vinyet.' : 'Hairlines · grain · vignette.'}</p>
+      <p class="muted" style="max-width: 52ch">
+        {
+          id
+            ? 'Garis vertikal tipis setiap 25vw dan grain film halus ada di seluruh halaman. Vinyet radial dipakai di belakang hero.'
+            : 'Thin vertical lines every 25vw and subtle film grain sit across every page. The radial vignette sits behind the hero.'
+        }
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .chip {
+    display: block;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--fg);
+    border-radius: var(--radius);
+  }
+  .type-specimens {
+    margin-top: var(--space-7);
+  }
+  .specimen {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-bottom: var(--hairline);
+  }
+  .grid-demo {
+    margin-top: var(--space-7);
+    align-items: start;
+  }
+  .block {
+    display: flex;
+    align-items: flex-end;
+    min-height: 12rem;
+    padding: var(--space-4);
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+  }
+  .comp {
+    margin-top: var(--space-8);
+  }
+  .comp > .label:first-child {
+    margin-bottom: var(--space-4);
+  }
+  .row-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+  .rows {
+    border-top: var(--hairline);
+  }
+  .texture-demo {
+    position: relative;
+    overflow: hidden;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+  .texture-demo .container {
+    position: relative;
+  }
+</style>

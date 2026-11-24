@@ -1,0 +1,58 @@
+---
+/** Bordered strip of 2–4 key numbers. */
+interface Stat {
+  value: string;
+  unit?: string;
+  label: string;
+}
+interface Props {
+  items: Stat[];
+}
+const { items } = Astro.props;
+---
+
+<dl class="stats" style={`--cols: ${items.length}`}>
+  {
+    items.map((s) => (
+      <div class="stat">
+        <dt class="label">{s.label}</dt>
+        <dd class="stat-value">
+          {s.value}
+          {s.unit && <span class="stat-unit">{s.unit}</span>}
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    margin: 0;
+    border: var(--hairline);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-1);
+    padding: clamp(1rem, 2vw, 1.25rem);
+  }
+  .stat + .stat {
+    border-left: var(--hairline);
+  }
+  .stat .label {
+    font-size: 0.625rem;
+  }
+  .stat-value {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-unit {
+    font-size: var(--text-sm);
+    margin-left: 0.15em;
+  }
+</style>

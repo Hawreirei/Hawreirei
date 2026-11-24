@@ -1,0 +1,154 @@
+---
+/**
+ * Floating card (3D tilt + glare are wired up in issue #4 via the data-tilt hook).
+ * Slots: "visual" (canvas/image area), default (description).
+ */
+interface Props {
+  href?: string;
+  index: string;
+  title: string;
+  meta?: string;
+  tags?: string;
+  tag?: string;
+  ratio?: string;
+}
+const { href, index, title, meta, tags, tag = 'Open', ratio = '16 / 10' } = Astro.props;
+const Tag = href ? 'a' : 'article';
+---
+
+<div class="card-stage">
+  <Tag class="card" href={href} data-tilt>
+    <span class="card-glare" aria-hidden="true"></span>
+
+    <div class="card-strip mono">
+      <span class="card-index">{index} / {title}</span>
+      {meta && <span class="muted">{meta}</span>}
+    </div>
+
+    <div class="card-visual" style={`aspect-ratio: ${ratio}`}>
+      <slot name="visual" />
+      <span class="card-tag mono" aria-hidden="true">{tag} <span>↗</span></span>
+    </div>
+
+    <div class="card-body">
+      <div>
+        <h3 class="h3 card-title">{title}</h3>
+        <div class="card-desc muted"><slot /></div>
+      </div>
+      {tags && <p class="label card-tags">[ {tags} ]</p>}
+    </div>
+  </Tag>
+</div>
+
+<style>
+  .card-stage {
+    perspective: 1400px;
+  }
+  .card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: inherit;
+    text-decoration: none;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition:
+      transform var(--dur-fast) var(--ease-snap),
+      border-color var(--dur-base) ease,
+      box-shadow var(--dur-base) ease;
+  }
+  .card:hover,
+  .card:focus-visible {
+    border-color: var(--fg);
+    box-shadow: var(--shadow-float);
+  }
+  .card-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--fg) 12%, transparent) 0%,
+      transparent 60%
+    );
+    transition: opacity 0.35s ease;
+  }
+  .card:hover .card-glare {
+    opacity: 1;
+  }
+  .card-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 0.875rem 1.25rem;
+    border-bottom: var(--hairline);
+    background: color-mix(in srgb, var(--bg) 60%, transparent);
+  }
+  .card-index {
+    font-weight: 500;
+  }
+  .card-visual {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .card-visual > :global(canvas),
+  .card-visual > :global(img),
+  .card-visual > :global(svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease-out-expo);
+  }
+  .card:hover .card-visual > :global(:first-child) {
+    transform: scale(1.03);
+  }
+  .card-tag {
+    position: absolute;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 2;
+    display: inline-flex;
+    gap: var(--space-2);
+    padding: 0.5rem 0.875rem;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    border: var(--hairline);
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      border-color var(--dur-base) ease;
+  }
+  .card:hover .card-tag {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: clamp(1.5rem, 2.5vw, 2rem);
+    border-top: var(--hairline);
+  }
+  @media (min-width: 640px) {
+    .card-body {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+  .card-desc {
+    margin-top: var(--space-2);
+    max-width: 34rem;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+  .card-tags {
+    flex-shrink: 0;
+  }
+</style>

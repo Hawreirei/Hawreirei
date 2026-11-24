@@ -1,0 +1,85 @@
+---
+/** White ⇄ black "void" theme switch. Follows the device until the visitor chooses; choice is remembered. */
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const t = useTranslations(Astro.props.lang);
+---
+
+<button
+  type="button"
+  class="theme-toggle mono"
+  data-theme-toggle
+  data-label-light={t('theme.light')}
+  data-label-dark={t('theme.dark')}
+  aria-label={t('theme.toggle')}
+  aria-pressed="false"
+>
+  <span class="tt-dot" aria-hidden="true"></span>
+  <span class="tt-text">{t('theme.dark')}</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: var(--fg);
+    cursor: pointer;
+    transition:
+      border-color var(--dur-base) ease,
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease;
+  }
+  .theme-toggle:hover {
+    border-color: var(--fg);
+  }
+  .tt-dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1px solid var(--fg);
+    border-radius: 50%;
+    background: linear-gradient(90deg, var(--fg) 50%, transparent 50%);
+  }
+</style>
+
+<script>
+  function sync() {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) => {
+      btn.setAttribute('aria-pressed', String(dark));
+      const text = btn.querySelector('.tt-text');
+      // Label shows the theme you will switch TO
+      if (text) text.textContent = (dark ? btn.dataset.labelLight : btn.dataset.labelDark) ?? '';
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {}
+      sync();
+    }),
+  );
+  // Follow the device setting live until the visitor makes a choice.
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem('theme');
+    } catch {}
+    if (saved) return;
+    document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+    sync();
+  });
+  sync();
+</script>
