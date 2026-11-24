@@ -1,0 +1,33 @@
+---
+// Root "/" → language home. Static hosting can't negotiate language on the server,
+// so: saved choice → browser language → default (Indonesian). Meta refresh as no-JS fallback.
+import { localizedPath } from '../i18n/utils';
+const idHome = localizedPath('id');
+const enHome = localizedPath('en');
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Itman Arif Hariri — Guru Matematika · Math Teacher</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={new URL(idHome, Astro.site)} />
+    <script is:inline define:vars={{ idHome, enHome }}>
+      var saved = null;
+      try { saved = localStorage.getItem('lang'); } catch (e) {}
+      var browserEn = (navigator.language || '').toLowerCase().indexOf('en') === 0;
+      var target = saved === 'en' || (!saved && browserEn) ? enHome : idHome;
+      location.replace(target);
+    </script>
+    <meta http-equiv="refresh" content={`1; url=${idHome}`} />
+    <style>
+      body { margin: 0; background: #fff; color: #0a0a0a; font-family: system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; }
+      a { color: inherit; margin: 0 0.75rem; }
+    </style>
+  </head>
+  <body>
+    <p><a href={idHome}>Bahasa Indonesia</a> · <a href={enHome}>English</a></p>
+  </body>
+</html>

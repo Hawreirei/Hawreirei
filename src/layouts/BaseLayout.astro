@@ -1,0 +1,106 @@
+---
+import '../styles/global.css';
+import { languages, type Lang } from '../i18n/ui';
+import { langs, useTranslations, switchLangPath, localizedPath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+}
+
+const { lang, title, description } = Astro.props;
+const t = useTranslations(lang);
+const otherLang: Lang = lang === 'id' ? 'en' : 'id';
+const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
+const pageDescription = description ?? t('site.description');
+const site = Astro.site ?? new URL('https://hawreirei.github.io');
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, site)} />
+    {
+      langs.map((l) => (
+        <link rel="alternate" hreflang={l} href={new URL(switchLangPath(Astro.url, l), site)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL(switchLangPath(Astro.url, 'id'), site)} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{lang === 'id' ? 'Langsung ke konten' : 'Skip to content'}</a>
+
+    <header class="site-header wrap">
+      <a class="brand" href={localizedPath(lang)}>Itman Arif Hariri</a>
+      <a
+        class="lang-switch mono"
+        href={switchLangPath(Astro.url, otherLang)}
+        hreflang={otherLang}
+        lang={otherLang}
+        data-lang={otherLang}
+      >
+        {otherLang.toUpperCase()} · {languages[otherLang]}
+      </a>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer wrap">
+      <span class="mono">© {new Date().getFullYear()} Itman Arif Hariri</span>
+      <span class="mono">{t('status.skeleton')}</span>
+    </footer>
+
+    <script>
+      // Remember the visitor's language choice for the root redirect.
+      document.querySelectorAll<HTMLAnchorElement>('[data-lang]').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('lang', a.dataset.lang ?? '');
+          } catch {}
+        }),
+      );
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-header,
+  .site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-block: 1.25rem;
+  }
+  .site-header {
+    border-bottom: 1px solid var(--line);
+  }
+  .site-footer {
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .brand {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    font-size: 1.125rem;
+  }
+  .lang-switch {
+    text-decoration: none;
+    border: 1px solid var(--fg);
+    padding: 0.4rem 0.75rem;
+  }
+  .lang-switch:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+</style>

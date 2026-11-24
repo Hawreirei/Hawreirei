@@ -1,0 +1,19 @@
+{
+  "name": "hawreirei-portfolio",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bilingual (ID/EN) portfolio website for a math teacher",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "dependencies": {
+    "astro": "7.4.10"
+  }
+}

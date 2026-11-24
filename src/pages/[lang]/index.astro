@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { Lang } from '../../i18n/ui';
+import { langs, useTranslations, localizedPath } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+
+// Placeholder doors — real pages arrive in issues #8, #9 and #13.
+const doors = [
+  { n: '01', key: 'hire', path: 'hire' },
+  { n: '02', key: 'learn', path: 'learn' },
+  { n: '03', key: 'resources', path: 'resources' },
+] as const;
+---
+
+<BaseLayout lang={lang}>
+  <section class="hero wrap">
+    <p class="mono">{t('home.role')} — 01</p>
+    <h1>Itman<br />Arif<br />Hariri</h1>
+    <p class="mission">{t('home.mission')}</p>
+  </section>
+
+  <section class="doors wrap" aria-label={lang === 'id' ? 'Tiga pintu' : 'Three doors'}>
+    {
+      doors.map((d) => (
+        <a class="door" href={localizedPath(lang, d.path)}>
+          <span class="mono">{d.n} /</span>
+          <strong>{t(`home.door.${d.key}`)}</strong>
+          <span class="desc">{t(`home.door.${d.key}.desc`)}</span>
+        </a>
+      ))
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 10vw, 8rem) clamp(2rem, 6vw, 4rem);
+  }
+  h1 {
+    font-size: clamp(3.5rem, 16vw, 13rem);
+    line-height: 0.88;
+    letter-spacing: -0.05em;
+    font-weight: 900;
+    margin: 1rem 0;
+    text-transform: uppercase;
+  }
+  .mission {
+    max-width: 34ch;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    color: var(--muted);
+  }
+  .doors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    padding-bottom: 4rem;
+  }
+  .door {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--fg);
+    text-decoration: none;
+    min-height: 11rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  .door strong {
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    margin-top: auto;
+  }
+  .door .desc {
+    color: var(--muted);
+  }
+  .door:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .door:hover .desc {
+    color: inherit;
+  }
+</style>
