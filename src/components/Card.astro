@@ -14,13 +14,21 @@ interface Props {
   ratio?: string;
   viz?: 'squares' | 'lissajous' | 'waves' | 'tunnel' | 'phyllotaxis';
   cursor?: string;
+  external?: boolean;
 }
-const { href, index, title, meta, tags, tag = 'Open', ratio = '16 / 10', viz, cursor = 'OPEN' } = Astro.props;
+const { href, index, title, meta, tags, tag = 'Open', ratio = '16 / 10', viz, cursor = 'OPEN', external = false } = Astro.props;
 const Tag = href ? 'a' : 'article';
 ---
 
 <div class="card-stage">
-  <Tag class="card" href={href} data-tilt data-cursor={href ? cursor : undefined}>
+  <Tag
+    class="card"
+    href={href}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noopener' : undefined}
+    data-tilt
+    data-cursor={href ? cursor : undefined}
+  >
     <span class="card-glare" aria-hidden="true"></span>
 
     <div class="card-strip mono">
@@ -46,6 +54,8 @@ const Tag = href ? 'a' : 'article';
 <style>
   .card-stage {
     perspective: 1400px;
+    /* card layout adapts to its own width, not the screen */
+    container-type: inline-size;
   }
   .card {
     position: relative;
@@ -106,6 +116,7 @@ const Tag = href ? 'a' : 'article';
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: top center;
     transition: transform 0.7s var(--ease-out-expo);
   }
   .card:hover .card-visual > :global(:first-child) {
@@ -139,12 +150,15 @@ const Tag = href ? 'a' : 'article';
     padding: clamp(1.5rem, 2.5vw, 2rem);
     border-top: var(--hairline);
   }
-  @media (min-width: 640px) {
+  @container (min-width: 560px) {
     .card-body {
       flex-direction: row;
       justify-content: space-between;
       align-items: flex-end;
     }
+  }
+  .card-title {
+    font-size: clamp(1.35rem, 7cqi, 2.5rem);
   }
   .card-desc {
     margin-top: var(--space-2);

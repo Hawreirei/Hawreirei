@@ -14,6 +14,9 @@ import StatsStrip from '../../components/StatsStrip.astro';
 import type { Lang } from '../../i18n/ui';
 import { langs, useTranslations, localizedPath } from '../../i18n/utils';
 import { programmes, stats } from '../../data/programmes';
+import { apps } from '../../data/apps';
+import Portrait from '../../components/Portrait.astro';
+import { Image } from 'astro:assets';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -112,14 +115,57 @@ const principles = id
     </div>
   </section>
 
-  <!-- 003 · Philosophy -->
+
+  <!-- 003 · Apps -->
+  <section class="section" aria-labelledby="apps-title">
+    <div class="container">
+      <div class="fade-up">
+        <SectionHeader index="003" label={t('nav.apps')} note={id ? 'Gratis · jalan di browser' : 'Free · runs in the browser'} id="apps-title">
+          {id ? 'Aplikasi buatan saya.' : 'Apps I built.'}
+        </SectionHeader>
+      </div>
+      <div class="g12 apps-strip">
+        {
+          apps.map((app, i) => (
+            <div style={`--span: 4; --drop: ${['0', '6rem', '3rem'][i % 3]}`} data-parallax={['0.02', '-0.03', '0.01'][i % 3]}>
+              <div class="fade-up" style={`--i: ${i}`}>
+                <Card
+                  href={app.demo}
+                  external
+                  index={String(i + 1).padStart(3, '0')}
+                  title={app.title}
+                  meta={app.kind[lang]}
+                  tags={app.tags[lang].slice(0, 2).join(' / ')}
+                  tag={t('apps.demo')}
+                  cursor="PLAY"
+                >
+                  <Image slot="visual" src={app.image} alt="" widths={[480, 720, 960]} sizes="(min-width: 1024px) 30vw, 100vw" />
+                  {app.description[lang]}
+                </Card>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="apps-more fade-up">
+        <a class="more-link mono" href={localizedPath(lang, 'apps')} data-cursor="ALL" data-magnetic-btn>
+          {t('apps.all')} <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 004 · Philosophy -->
   <section class="section" aria-labelledby="philosophy-title">
     <div class="container g12 philosophy">
       <div class="fade-up" style="--span: 12">
-        <BracketLabel index="003" text={id ? 'Filosofi mengajar' : 'Teaching philosophy'} />
+        <BracketLabel index="004" text={id ? 'Filosofi mengajar' : 'Teaching philosophy'} />
         <h2 class="display philo-title" id="philosophy-title">
           {id ? 'Pahami dulu.' : 'Understand first.'}<br /><span class="outline">{id ? 'Lalu cepat.' : 'Then fast.'}</span>
         </h2>
+      </div>
+      <div class="fade-up philo-photo" style="--span: 5" data-parallax="0.04">
+        <Portrait lang={lang} />
       </div>
       <div class="fade-up philo-body" style="--span: 6; --start: 7; --i: 1">
         <p class="lead">
@@ -147,11 +193,11 @@ const principles = id
     </div>
   </section>
 
-  <!-- 004 · Problem of the Week (SAMPLE — real problems arrive with issue #14) -->
+  <!-- 005 · Problem of the Week (SAMPLE — real problems arrive with issue #14) -->
   <section class="section potw" aria-labelledby="potw-title">
     <div class="container g12 potw-grid">
       <div class="fade-up" style="--span: 5">
-        <BracketLabel index="004" text={id ? 'Soal minggu ini · contoh' : 'Problem of the week · sample'} />
+        <BracketLabel index="005" text={id ? 'Soal minggu ini · contoh' : 'Problem of the week · sample'} />
         <h2 class="h2" id="potw-title">{id ? 'Berapa angka satuan dari 7²⁰²⁶?' : 'What is the last digit of 7²⁰²⁶?'}</h2>
         <details class="solution">
           <summary class="mono" data-cursor="?">
@@ -220,6 +266,35 @@ const principles = id
     border-top: var(--hairline);
   }
 
+  /* apps */
+  .apps-strip {
+    margin-top: clamp(4rem, 8vw, 6rem);
+    row-gap: clamp(3rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .apps-more {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: clamp(3rem, 6vw, 6rem);
+  }
+  .more-link {
+    display: inline-flex;
+    gap: var(--space-3);
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--fg);
+    border-radius: var(--radius);
+    color: var(--fg);
+    text-decoration: none;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      transform 0.35s var(--ease-out-expo);
+  }
+  .more-link:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
   /* philosophy */
   .philosophy {
     align-items: start;
@@ -229,6 +304,9 @@ const principles = id
     margin-top: var(--space-5);
     /* longest word ("UNDERSTAND") must fit the container at every width */
     font-size: clamp(1.5rem, 7.4vw, 8rem);
+  }
+  .philo-photo {
+    max-width: 34rem;
   }
   .philo-body {
     display: grid;

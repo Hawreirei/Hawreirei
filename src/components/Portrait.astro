@@ -1,0 +1,72 @@
+---
+/** Owner's photo (colour, owner's choice). Optimised to WebP/AVIF by astro:assets. */
+import { Picture } from 'astro:assets';
+import portrait from '../assets/photo/itman-portrait.jpg';
+import square from '../assets/photo/itman-square.jpg';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  shape?: 'portrait' | 'square';
+  caption?: boolean;
+  eager?: boolean;
+  class?: string;
+}
+const { lang, shape = 'portrait', caption = true, eager = false, class: className } = Astro.props;
+const src = shape === 'portrait' ? portrait : square;
+const alt = lang === 'id' ? 'Itman Arif Hariri, guru matematika' : 'Itman Arif Hariri, math teacher';
+---
+
+<figure class:list={['portrait', `portrait--${shape}`, className]}>
+  <div class="portrait-frame">
+    <Picture
+      src={src}
+      alt={alt}
+      formats={['avif', 'webp']}
+      widths={[360, 560, 800, 1160]}
+      sizes="(min-width: 1024px) 40vw, 100vw"
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+    />
+  </div>
+  {
+    caption && (
+      <figcaption class="label">
+        <span>Fig. 01</span>
+        <span>Itman Arif Hariri</span>
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .portrait {
+    margin: 0;
+  }
+  .portrait-frame {
+    overflow: hidden;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: #fff;
+  }
+  .portrait-frame :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 1.2s var(--ease-out-expo);
+  }
+  .portrait:hover .portrait-frame :global(img) {
+    transform: scale(1.025);
+  }
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .portrait:hover .portrait-frame :global(img) {
+      transform: none;
+    }
+  }
+</style>

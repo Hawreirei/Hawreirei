@@ -33,6 +33,7 @@ export const nav = [
   { key: 'hire', path: 'hire' },
   { key: 'learn', path: 'learn' },
   { key: 'resources', path: 'resources' },
+  { key: 'apps', path: 'apps' },
   { key: 'contact', path: 'contact' },
 ] as const;
 
