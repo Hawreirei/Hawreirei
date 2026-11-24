@@ -3,6 +3,7 @@ import '@fontsource-variable/syne';
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
+import '../styles/motion.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { languages, type Lang } from '../i18n/ui';
 import { langs, useTranslations, switchLangPath, localizedPath } from '../i18n/utils';
@@ -47,12 +48,27 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
         var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
         if (dark) document.documentElement.dataset.theme = 'dark';
       } catch (e) {}
+      // Motion: mark JS, and decide whether the 00 → 100 intro plays (once per session).
+      document.documentElement.classList.add('js');
+      try {
+        if (!sessionStorage.getItem('intro-seen') && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+          document.documentElement.classList.add('intro-run');
+      } catch (e) {}
     </script>
   </head>
   <body>
     <a class="skip-link" href="#main">{t('skip')}</a>
     <div class="hairlines" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
+
+    <div class="intro" data-intro aria-hidden="true">
+      <div class="intro-meta"><span>Itman Arif Hariri</span><span>{t('home.role')}</span></div>
+      <div>
+        <div class="intro-count" data-intro-count>00</div>
+        <div class="intro-bar" data-intro-bar></div>
+        <div class="intro-meta" style="margin-top: 1rem"><span>Loading</span><span>Edition 2026</span></div>
+      </div>
+    </div>
 
     <!-- Temporary header — full telemetry header + MENU overlay come in issue #5 -->
     <header class="site-header">
@@ -61,6 +77,10 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
           <span class="brand-mark" aria-hidden="true"></span>
           Itman Arif Hariri
         </a>
+        <div class="telemetry label" aria-hidden="true">
+          <span><span class="status-dot"></span> (x, y) = <span class="fg" data-xy>(0000, 0000)</span></span>
+          <span>∫ <span class="fg" data-scroll-pct>000%</span></span>
+        </div>
         <div class="header-actions">
           <ThemeToggle lang={lang} />
           <a
@@ -88,6 +108,9 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
       </div>
     </footer>
 
+    <script>
+      import '../scripts/motion/index.ts';
+    </script>
     <script>
       // Remember the visitor's language choice for the root redirect.
       document.querySelectorAll<HTMLAnchorElement>('[data-lang]').forEach((a) =>
@@ -154,6 +177,33 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
     background: var(--fg);
     color: var(--bg);
     border-color: var(--fg);
+  }
+  .telemetry {
+    display: none;
+    gap: var(--space-6);
+  }
+  @media (min-width: 1024px) and (hover: hover) {
+    .telemetry {
+      display: flex;
+    }
+  }
+  .telemetry .fg {
+    color: var(--fg);
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 0.4em;
+    border-radius: 50%;
+    background: var(--fg);
+    vertical-align: 1px;
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.25;
+    }
   }
   .footer-row {
     display: flex;

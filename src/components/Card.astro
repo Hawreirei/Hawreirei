@@ -1,7 +1,8 @@
 ---
 /**
- * Floating card (3D tilt + glare are wired up in issue #4 via the data-tilt hook).
- * Slots: "visual" (canvas/image area), default (description).
+ * Floating card: 3D tilt + glare + magnetic tag (issue #4, desktop mouse only).
+ * Visual: pass `viz` for an animated math canvas (squares · lissajous · waves · tunnel ·
+ * phyllotaxis), or use the "visual" slot for an image/SVG. Default slot = description.
  */
 interface Props {
   href?: string;
@@ -11,13 +12,15 @@ interface Props {
   tags?: string;
   tag?: string;
   ratio?: string;
+  viz?: 'squares' | 'lissajous' | 'waves' | 'tunnel' | 'phyllotaxis';
+  cursor?: string;
 }
-const { href, index, title, meta, tags, tag = 'Open', ratio = '16 / 10' } = Astro.props;
+const { href, index, title, meta, tags, tag = 'Open', ratio = '16 / 10', viz, cursor = 'OPEN' } = Astro.props;
 const Tag = href ? 'a' : 'article';
 ---
 
 <div class="card-stage">
-  <Tag class="card" href={href} data-tilt>
+  <Tag class="card" href={href} data-tilt data-cursor={href ? cursor : undefined}>
     <span class="card-glare" aria-hidden="true"></span>
 
     <div class="card-strip mono">
@@ -26,8 +29,8 @@ const Tag = href ? 'a' : 'article';
     </div>
 
     <div class="card-visual" style={`aspect-ratio: ${ratio}`}>
-      <slot name="visual" />
-      <span class="card-tag mono" aria-hidden="true">{tag} <span>↗</span></span>
+      {viz ? <canvas data-mathviz={viz} aria-hidden="true" /> : <slot name="visual" />}
+      <span class="card-tag mono" aria-hidden="true" data-magnetic>{tag} <span>↗</span></span>
     </div>
 
     <div class="card-body">
@@ -121,7 +124,8 @@ const Tag = href ? 'a' : 'article';
     transition:
       background-color var(--dur-base) ease,
       color var(--dur-base) ease,
-      border-color var(--dur-base) ease;
+      border-color var(--dur-base) ease,
+      transform 0.35s var(--ease-out-expo);
   }
   .card:hover .card-tag {
     background: var(--fg);

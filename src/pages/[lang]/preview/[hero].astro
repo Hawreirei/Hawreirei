@@ -1,0 +1,23 @@
+---
+/** Hero option previews for the owner (issue #4). noindex, not linked. */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Hero from '../../../components/Hero.astro';
+import type { Lang } from '../../../i18n/ui';
+import { langs } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.flatMap((lang) => (['surface', 'plane', 'mix'] as const).map((hero) => ({ params: { lang, hero } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const variant = Astro.params.hero as 'surface' | 'plane' | 'mix';
+---
+
+<BaseLayout lang={lang} title={`Hero — ${variant}`} noindex>
+  <Hero lang={lang} variant={variant} next="#after" />
+  <section class="section" id="after">
+    <div class="container">
+      <p class="label">[ Preview — hero option: {variant === 'surface' ? 'A · Surface' : variant === 'plane' ? 'B · Plane' : 'Mix · A desktop / B phone'} ]</p>
+    </div>
+  </section>
+</BaseLayout>

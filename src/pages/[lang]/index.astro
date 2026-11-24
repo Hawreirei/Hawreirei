@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Card from '../../components/Card.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
 import type { Lang } from '../../i18n/ui';
 import { langs, useTranslations, localizedPath } from '../../i18n/utils';
 
@@ -9,79 +12,58 @@ export function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const t = useTranslations(lang);
+const id = lang === 'id';
 
-// Placeholder doors — real pages arrive in issues #8, #9 and #13.
+// Hero background (owner's choice, issue #4): 3D surface on screens ≥768px, function plane on phones.
+const HERO_VARIANT = 'mix' as const;
+
+// Placeholder doors — real pages arrive in issues #8, #9 and #13; full homepage in #6.
 const doors = [
-  { n: '01', key: 'hire', path: 'hire' },
-  { n: '02', key: 'learn', path: 'learn' },
-  { n: '03', key: 'resources', path: 'resources' },
+  { n: '001', key: 'hire', path: 'hire', viz: 'squares', span: 7, start: 1, drop: '0', ratio: '16 / 10', parallax: '0.03' },
+  { n: '002', key: 'learn', path: 'learn', viz: 'lissajous', span: 5, start: 8, drop: '9rem', ratio: '1 / 1', parallax: '-0.04' },
+  { n: '003', key: 'resources', path: 'resources', viz: 'phyllotaxis', span: 6, start: 2, drop: '0', ratio: '16 / 10', parallax: '-0.03' },
 ] as const;
 ---
 
 <BaseLayout lang={lang}>
-  <section class="hero container">
-    <p class="label">[ 000 — {t('home.role')} ]</p>
-    <h1 class="display display-hero">Itman<br /><span class="outline">Arif</span><br />Hariri</h1>
-    <p class="mission lead muted">{t('home.mission')}</p>
-  </section>
+  <Hero lang={lang} variant={HERO_VARIANT} />
 
-  <section class="doors container" aria-label={lang === 'id' ? 'Tiga pintu' : 'Three doors'}>
-    {
-      doors.map((d) => (
-        <a class="door" href={localizedPath(lang, d.path)}>
-          <span class="mono">{d.n} /</span>
-          <strong>{t(`home.door.${d.key}`)}</strong>
-          <span class="desc">{t(`home.door.${d.key}.desc`)}</span>
-        </a>
-      ))
-    }
+  <section class="section" id="doors">
+    <div class="container">
+      <div class="fade-up">
+        <SectionHeader index="001" label={id ? 'Tiga pintu' : 'Three doors'} note={id ? 'Pilih jalur Anda' : 'Choose your path'}>
+          {id ? 'Rekrut. Belajar. Sumber.' : 'Hire. Learn. Resources.'}
+        </SectionHeader>
+      </div>
+      <div class="g12 doors">
+        {
+          doors.map((d, i) => (
+            <div style={`--span: ${d.span}; --start: ${d.start}; --drop: ${d.drop}`} data-parallax={d.parallax}>
+              <div class="fade-up" style={`--i: ${i}`}>
+                <Card
+                  href={localizedPath(lang, d.path)}
+                  index={d.n}
+                  title={t(`home.door.${d.key}`)}
+                  meta={t(`home.door.${d.key}.desc`)}
+                  viz={d.viz}
+                  ratio={d.ratio}
+                  tag={id ? 'Buka' : 'Open'}
+                >
+                  {t(`home.door.${d.key}.desc`)}
+                </Card>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero {
-    padding-block: clamp(3rem, 10vw, 8rem) clamp(2rem, 6vw, 4rem);
-  }
-  .hero h1 {
-    margin-block: var(--space-5);
-  }
-  .mission {
-    max-width: 34ch;
-  }
   .doors {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-    gap: 1rem;
-    padding-bottom: 4rem;
-  }
-  .door {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1.5rem;
-    border: var(--hairline);
-    border-radius: var(--radius);
-    background: var(--surface);
-    text-decoration: none;
-    min-height: 11rem;
-    transition: background 0.2s, color 0.2s;
-  }
-  .door strong {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-tight);
-    margin-top: auto;
-  }
-  .door .desc {
-    color: var(--muted);
-  }
-  .door:hover {
-    background: var(--fg);
-    color: var(--bg);
-    border-color: var(--fg);
-  }
-  .door:hover .desc {
-    color: inherit;
+    margin-top: clamp(4rem, 8vw, 6rem);
+    row-gap: clamp(4rem, 8vw, 8rem);
+    align-items: start;
   }
 </style>

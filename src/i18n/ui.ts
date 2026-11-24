@@ -32,6 +32,13 @@ export const ui = {
     'copy.copy': 'Salin',
     'copy.copied': 'Tersalin ✓',
     'skip': 'Langsung ke konten',
+    'hero.edition': 'Edisi 2026 // Portofolio',
+    'hero.disciplines': 'Mengajar · Les privat · Sumber belajar',
+    'hero.location': 'Indonesia',
+    'hero.kicker': 'Matematika · Mathematics',
+    'hero.selected': 'Tiga pintu (03)',
+    'hero.explore': 'Gulir untuk menjelajah',
+    'hero.scroll': 'Gulir',
   },
   en: {
     'site.title': 'Itman Arif Hariri — Math Teacher',
@@ -58,6 +65,13 @@ export const ui = {
     'copy.copy': 'Copy',
     'copy.copied': 'Copied ✓',
     'skip': 'Skip to content',
+    'hero.edition': 'Edition 2026 // Portfolio',
+    'hero.disciplines': 'Teaching · Private tutoring · Resources',
+    'hero.location': 'Indonesia',
+    'hero.kicker': 'Mathematics · Matematika',
+    'hero.selected': 'Three doors (03)',
+    'hero.explore': 'Scroll to explore',
+    'hero.scroll': 'Scroll',
   },
 } as const;
 
