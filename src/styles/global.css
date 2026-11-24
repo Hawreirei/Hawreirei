@@ -14,6 +14,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   background: var(--bg);
+  scroll-padding-top: var(--header-h);
+}
+
+html.menu-open,
+html.menu-open body {
+  overflow: hidden;
 }
 
 body {

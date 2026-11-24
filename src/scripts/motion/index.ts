@@ -7,6 +7,7 @@ import { initCursor } from './cursor';
 import { initMathViz } from './mathviz';
 import { initHeroCanvas } from './heroCanvas';
 import {
+  getLenis,
   initMagnetic,
   initParallax,
   initReveals,
@@ -31,3 +32,7 @@ initReveals();
 introDone.then(() =>
   requestAnimationFrame(() => document.querySelectorAll('[data-reveal="manual"]').forEach(revealNow)),
 );
+
+// Freeze smooth scroll behind the MENU overlay.
+document.addEventListener('menu:open', () => getLenis()?.stop());
+document.addEventListener('menu:close', () => getLenis()?.start());

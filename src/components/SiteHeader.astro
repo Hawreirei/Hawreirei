@@ -1,0 +1,517 @@
+---
+/**
+ * Site header + full-screen MENU overlay (issue #5).
+ * Desktop: brand · telemetry · key links · CONTACT · MENU · theme · language.
+ * Phones: brand · MENU (theme + language move into the overlay).
+ */
+import ThemeToggle from './ThemeToggle.astro';
+import { languages, type Lang } from '../i18n/ui';
+import { useTranslations, localizedPath, switchLangPath } from '../i18n/utils';
+import { contact, headerNav, mailLink, nav, waLink } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const otherLang: Lang = lang === 'id' ? 'en' : 'id';
+
+const here = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (path: string) => here === localizedPath(lang, path);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand mono" href={localizedPath(lang)} data-cursor="HOME">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Itman Arif Hariri</span>
+    </a>
+
+    <div class="telemetry label" aria-hidden="true">
+      <span><span class="status-dot"></span>(x, y) = <span class="fg" data-xy>(0000, 0000)</span></span>
+      <span>∫ <span class="fg" data-scroll-pct>000%</span></span>
+    </div>
+
+    <nav class="header-nav mono" aria-label={t('menu.label')}>
+      {
+        headerNav.map((key, i) => {
+          const path = nav.find((n) => n.key === key)!.path;
+          return (
+            <a href={localizedPath(lang, path)} aria-current={isCurrent(path) ? 'page' : undefined}>
+              <span class="idx">{pad(i + 1)}.</span>
+              {t(`nav.short.${key}`)}
+            </a>
+          );
+        })
+      }
+      <a class="contact-btn" href={localizedPath(lang, 'contact')} data-cursor="PING">{t('nav.contact')}</a>
+    </nav>
+
+    <div class="header-actions">
+      <span class="desktop-only"><ThemeToggle lang={lang} /></span>
+      <a
+        class="lang-switch mono desktop-only"
+        href={switchLangPath(Astro.url, otherLang)}
+        hreflang={otherLang}
+        lang={otherLang}
+        data-lang={otherLang}
+        title={languages[otherLang]}>{otherLang.toUpperCase()}</a
+      >
+      <button
+        type="button"
+        class="menu-btn mono"
+        aria-expanded="false"
+        aria-controls="site-menu"
+        data-menu-open
+        data-cursor="MENU"
+      >
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+        {t('menu.open')}
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="site-menu" class="menu" role="dialog" aria-modal="true" aria-label={t('menu.label')} hidden data-menu>
+  <div class="menu-top container">
+    <span class="label">[ {t('menu.label')} ]</span>
+    <button type="button" class="menu-close mono" data-menu-close data-cursor="CLOSE">
+      {t('menu.close')} <span aria-hidden="true">[ESC]</span>
+    </button>
+  </div>
+
+  <nav class="menu-nav container" aria-label={t('menu.label')}>
+    <ol>
+      {
+        nav.map((item, i) => (
+          <li style={`--i: ${i}`}>
+            <a href={localizedPath(lang, item.path)} aria-current={isCurrent(item.path) ? 'page' : undefined} data-cursor="GO">
+              <span class="menu-idx mono">{pad(i + 1)}</span>
+              <span class="menu-word">
+                {(headerNav as readonly string[]).includes(item.key) ? (
+                  <>
+                    <span class="w-full">{t(`nav.${item.key}`)}</span>
+                    <span class="w-short">{t(`nav.short.${item.key as (typeof headerNav)[number]}`)}</span>
+                  </>
+                ) : (
+                  t(`nav.${item.key}`)
+                )}
+              </span>
+              <span class="menu-arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <div class="menu-bottom container">
+    <div class="menu-group">
+      <span class="label">{t('menu.language')}</span>
+      <div class="menu-langs mono">
+        {
+          (Object.keys(languages) as Lang[]).map((l) => (
+            <a
+              href={switchLangPath(Astro.url, l)}
+              hreflang={l}
+              lang={l}
+              data-lang={l}
+              aria-current={l === lang ? 'true' : undefined}
+            >
+              {l.toUpperCase()} · {languages[l]}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <div class="menu-group">
+      <span class="label">{t('menu.theme')}</span>
+      <ThemeToggle lang={lang} />
+    </div>
+    <div class="menu-group">
+      <span class="label">{t('menu.contact')}</span>
+      <div class="menu-contact mono">
+        <a href={waLink(lang)} target="_blank" rel="noopener" data-cursor="WA">WhatsApp ↗</a>
+        <a href={mailLink(lang)} data-cursor="MAIL">{contact.email}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: var(--hairline);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    height: var(--header-h);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .brand-mark {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--fg);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .brand:hover .brand-mark {
+    transform: rotate(45deg);
+  }
+
+  /* telemetry: desktop mouse only */
+  .telemetry {
+    display: none;
+    gap: var(--space-6);
+    white-space: nowrap;
+  }
+  @media (min-width: 1280px) and (hover: hover) {
+    .telemetry {
+      display: flex;
+    }
+  }
+  .fg {
+    color: var(--fg);
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 0.6em;
+    border-radius: 50%;
+    background: var(--fg);
+    vertical-align: 1px;
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  /* desktop links */
+  .header-nav {
+    display: none;
+    align-items: center;
+    gap: var(--space-6);
+    margin-left: auto;
+  }
+  @media (min-width: 1024px) {
+    .header-nav {
+      display: flex;
+    }
+  }
+  .header-nav a {
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--dur-base) ease;
+  }
+  .header-nav a:hover,
+  .header-nav a[aria-current='page'] {
+    color: var(--fg);
+  }
+  .idx {
+    margin-right: 0.35em;
+    opacity: 0.55;
+  }
+  .header-nav .contact-btn {
+    padding: 0.4rem 0.75rem;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: var(--fg);
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      border-color var(--dur-base) ease;
+  }
+  .header-nav .contact-btn:hover {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .desktop-only {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .desktop-only {
+      display: inline-flex;
+    }
+  }
+  .lang-switch,
+  .menu-btn,
+  .menu-close {
+    padding: 0.4rem 0.75rem;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--fg);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      border-color var(--dur-base) ease;
+  }
+  .lang-switch:hover,
+  .menu-btn:hover,
+  .menu-close:hover {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .menu-icon {
+    display: inline-grid;
+    gap: 3px;
+    width: 14px;
+  }
+  .menu-icon span {
+    height: 1px;
+    background: currentColor;
+  }
+  @media (max-width: 420px) {
+    .brand {
+      letter-spacing: 0.12em;
+    }
+  }
+
+  /* ---------- MENU overlay ---------- */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-block: var(--space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--bg);
+    color: var(--fg);
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.7s var(--ease-out-expo);
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu.is-open {
+    clip-path: inset(0 0 0 0);
+  }
+  .menu-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: calc(var(--header-h) - var(--space-5));
+  }
+  .menu-nav ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--hairline);
+  }
+  .menu-nav li {
+    overflow: hidden;
+    border-bottom: var(--hairline);
+  }
+  .menu-nav a {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding-block: clamp(0.5rem, 1.4vh, 1rem);
+    text-decoration: none;
+    color: var(--fg);
+    transform: translateY(110%);
+    transition:
+      transform 0.8s var(--ease-out-expo),
+      padding-left 0.45s var(--ease-out-expo);
+    transition-delay: calc(0.12s + var(--i) * 0.06s), 0s;
+  }
+  .menu.is-open .menu-nav a {
+    transform: none;
+  }
+  .menu-nav a:hover,
+  .menu-nav a:focus-visible {
+    padding-left: clamp(0.5rem, 2vw, 2rem);
+  }
+  .menu-idx {
+    width: 2ch;
+    color: var(--muted);
+  }
+  .menu-word {
+    font-family: var(--font-display);
+    font-weight: 800;
+    /* fit six items on screen: limited by both width and height */
+    font-size: clamp(2rem, min(5.6vw, 8.2vh), 6rem);
+    line-height: 0.95;
+    letter-spacing: var(--tracking-brutal);
+    text-transform: uppercase;
+  }
+  /* current page in outline (paint-order hides Syne's overlapping contours) */
+  .menu-nav a[aria-current='page'] .menu-word {
+    color: var(--bg);
+    -webkit-text-stroke: 3px var(--fg);
+    paint-order: stroke fill;
+    letter-spacing: -0.02em;
+  }
+  /* phones: short labels so each item stays on one line */
+  .w-short {
+    display: none;
+  }
+  @media (max-width: 639px) {
+    .w-full {
+      display: none;
+    }
+    .w-short {
+      display: inline;
+    }
+  }
+  .menu-arrow {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    opacity: 0;
+    transform: translate(-8px, 8px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s var(--ease-out-expo);
+  }
+  .menu-nav a:hover .menu-arrow,
+  .menu-nav a:focus-visible .menu-arrow {
+    opacity: 1;
+    transform: none;
+  }
+  .menu-bottom {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-5);
+    opacity: 0;
+    transition: opacity 0.6s ease 0.45s;
+  }
+  .menu.is-open .menu-bottom {
+    opacity: 1;
+  }
+  .menu-group {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    justify-items: start;
+  }
+  .menu-langs,
+  .menu-contact {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .menu-langs a,
+  .menu-contact a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--dur-base) ease;
+  }
+  .menu-langs a:hover,
+  .menu-langs a[aria-current='true'],
+  .menu-contact a:hover {
+    color: var(--fg);
+  }
+  .menu-contact a {
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu,
+    .menu-nav a,
+    .menu-bottom {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+
+  if (menu && openBtn && closeBtn) {
+    let lastFocus: HTMLElement | null = null;
+    const focusables = () =>
+      [...menu.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter((el) => el.offsetParent !== null);
+
+    const open = () => {
+      lastFocus = document.activeElement as HTMLElement | null;
+      menu.hidden = false;
+      document.documentElement.classList.add('menu-open');
+      openBtn.setAttribute('aria-expanded', 'true');
+      document.dispatchEvent(new CustomEvent('menu:open'));
+      requestAnimationFrame(() => {
+        menu.classList.add('is-open');
+        closeBtn.focus({ preventScroll: true });
+      });
+    };
+
+    const close = (restoreFocus = true) => {
+      if (menu.hidden) return;
+      menu.classList.remove('is-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('menu-open');
+      document.dispatchEvent(new CustomEvent('menu:close'));
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.setTimeout(() => (menu.hidden = true), reduced ? 0 : 700);
+      if (restoreFocus) (lastFocus ?? openBtn).focus({ preventScroll: true });
+    };
+
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', () => close());
+    menu.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('a')) close(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (menu.hidden) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      } else if (e.key === 'Tab') {
+        // focus trap
+        const items = focusables();
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+</script>

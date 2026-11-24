@@ -4,9 +4,11 @@ import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import '../styles/motion.css';
-import ThemeToggle from '../components/ThemeToggle.astro';
-import { languages, type Lang } from '../i18n/ui';
-import { langs, useTranslations, switchLangPath, localizedPath } from '../i18n/utils';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+import type { Lang } from '../i18n/ui';
+import { langs, useTranslations, switchLangPath } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -17,7 +19,6 @@ interface Props {
 
 const { lang, title, description, noindex = false } = Astro.props;
 const t = useTranslations(lang);
-const otherLang: Lang = lang === 'id' ? 'en' : 'id';
 const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
 const pageDescription = description ?? t('site.description');
 const site = Astro.site ?? new URL('https://hawreirei.github.io');
@@ -70,43 +71,14 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
       </div>
     </div>
 
-    <!-- Temporary header — full telemetry header + MENU overlay come in issue #5 -->
-    <header class="site-header">
-      <div class="container header-row">
-        <a class="brand mono" href={localizedPath(lang)}>
-          <span class="brand-mark" aria-hidden="true"></span>
-          Itman Arif Hariri
-        </a>
-        <div class="telemetry label" aria-hidden="true">
-          <span><span class="status-dot"></span> (x, y) = <span class="fg" data-xy>(0000, 0000)</span></span>
-          <span>∫ <span class="fg" data-scroll-pct>000%</span></span>
-        </div>
-        <div class="header-actions">
-          <ThemeToggle lang={lang} />
-          <a
-            class="lang-switch mono"
-            href={switchLangPath(Astro.url, otherLang)}
-            hreflang={otherLang}
-            lang={otherLang}
-            data-lang={otherLang}
-            title={languages[otherLang]}
-          >
-            {otherLang.toUpperCase()}
-          </a>
-        </div>
-      </div>
-    </header>
+    <SiteHeader lang={lang} />
 
     <main id="main">
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="container footer-row label">
-        <span>© {new Date().getFullYear()} Itman Arif Hariri</span>
-        <span>{t('status.skeleton')}</span>
-      </div>
-    </footer>
+    <SiteFooter lang={lang} />
+    <WhatsAppFab lang={lang} />
 
     <script>
       import '../scripts/motion/index.ts';
@@ -124,97 +96,3 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
   </body>
 </html>
 
-<style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    border-bottom: var(--hairline);
-    background: color-mix(in srgb, var(--bg) 78%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    height: clamp(3.5rem, 3rem + 1vw, 4rem);
-  }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-decoration: none;
-  }
-  .brand-mark {
-    width: 0.5rem;
-    height: 0.5rem;
-    background: var(--fg);
-    transition: transform 0.3s var(--ease-out-expo);
-  }
-  .brand:hover .brand-mark {
-    transform: rotate(45deg);
-  }
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-  .lang-switch {
-    padding: 0.4rem 0.75rem;
-    border: var(--hairline);
-    border-radius: var(--radius);
-    text-decoration: none;
-    transition:
-      background-color var(--dur-base) ease,
-      color var(--dur-base) ease,
-      border-color var(--dur-base) ease;
-  }
-  .lang-switch:hover {
-    background: var(--fg);
-    color: var(--bg);
-    border-color: var(--fg);
-  }
-  .telemetry {
-    display: none;
-    gap: var(--space-6);
-  }
-  @media (min-width: 1024px) and (hover: hover) {
-    .telemetry {
-      display: flex;
-    }
-  }
-  .telemetry .fg {
-    color: var(--fg);
-  }
-  .status-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    margin-right: 0.4em;
-    border-radius: 50%;
-    background: var(--fg);
-    vertical-align: 1px;
-    animation: blink 2s ease-in-out infinite;
-  }
-  @keyframes blink {
-    50% {
-      opacity: 0.25;
-    }
-  }
-  .footer-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding-block: var(--space-6);
-  }
-  @media (max-width: 420px) {
-    .brand {
-      letter-spacing: 0.12em;
-    }
-  }
-</style>

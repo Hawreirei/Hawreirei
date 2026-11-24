@@ -1,0 +1,136 @@
+---
+/** Footer: huge closing CTA, copy-email, WhatsApp, bottom bar (issue #5). */
+import BracketLabel from './BracketLabel.astro';
+import CopyButton from './CopyButton.astro';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+import { contact, mailLink, waLink } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="site-footer" id="contact">
+  <div class="container">
+    <div class="footer-cta">
+      <div class="fade-up">
+        <BracketLabel index="∞" text={t('footer.label')} />
+        <p class="footer-title display" aria-label={`${t('footer.cta1')} ${t('footer.cta2')}`}>
+          <span>{t('footer.cta1')}</span>
+          <span class="outline">{t('footer.cta2')}</span>
+        </p>
+        <p class="footer-intro muted">{t('footer.intro')}</p>
+      </div>
+
+      <div class="footer-actions fade-up" style="--i: 2">
+        <span class="label">{t('footer.email')}</span>
+        <CopyButton value={contact.email} lang={lang} />
+        <div class="footer-links">
+          <a class="footer-btn solid" href={waLink(lang)} target="_blank" rel="noopener" data-cursor="WA" data-magnetic-btn>
+            {t('footer.wa')} <span aria-hidden="true">↗</span>
+          </a>
+          <a class="footer-btn" href={mailLink(lang)} data-cursor="MAIL" data-magnetic-btn>
+            Email <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar label">
+      <span>© {new Date().getFullYear()} {contact.name}. {t('footer.rights')}</span>
+      <a href="#main" class="fg" data-cursor="TOP">{t('footer.top')} ↑</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: var(--section-y);
+  }
+  .footer-cta {
+    display: grid;
+    gap: var(--space-7);
+    padding-bottom: clamp(3rem, 6vw, 4rem);
+    border-bottom: var(--hairline);
+  }
+
+  .footer-title {
+    display: grid;
+    margin-top: var(--space-5);
+    font-size: clamp(3rem, 1.5rem + 7vw, 8.5rem);
+    line-height: 0.9;
+  }
+  .footer-intro {
+    max-width: 40ch;
+    margin-top: var(--space-5);
+  }
+  .footer-actions {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  @media (min-width: 1024px) {
+    .footer-actions {
+      grid-template-columns: auto auto;
+      align-items: end;
+      justify-content: start;
+      column-gap: var(--space-5);
+    }
+    .footer-actions > .label {
+      grid-column: 1 / -1;
+    }
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .footer-btn {
+    display: inline-flex;
+    gap: var(--space-2);
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--fg);
+    border-radius: var(--radius);
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      transform 0.35s var(--ease-out-expo);
+  }
+  .footer-btn:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .footer-btn.solid {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .footer-btn.solid:hover {
+    background: transparent;
+    color: var(--fg);
+  }
+  .footer-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+  }
+  .footer-bar a {
+    text-decoration: none;
+  }
+  .footer-bar a:hover {
+    opacity: 0.7;
+  }
+  .fg {
+    color: var(--fg);
+  }
+</style>

@@ -47,6 +47,11 @@ const t = useTranslations(lang);
     overflow-wrap: anywhere;
     text-align: left;
   }
+  @media (min-width: 640px) {
+    .copy-text {
+      white-space: nowrap;
+    }
+  }
   .copy-badge {
     flex-shrink: 0;
     padding: 0.25rem 0.6rem;
