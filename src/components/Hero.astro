@@ -146,6 +146,11 @@ const t = useTranslations(lang);
     font-size: clamp(3.5rem, 12.2vw, 14rem);
     user-select: none;
   }
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 14vw;
+    }
+  }
   @media (min-width: 640px) {
     .indent {
       padding-left: 12vw;

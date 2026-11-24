@@ -57,10 +57,14 @@ const t = useTranslations(lang);
     border-bottom: var(--hairline);
   }
 
+  .footer-cta > * {
+    min-width: 0;
+  }
   .footer-title {
     display: grid;
     margin-top: var(--space-5);
-    font-size: clamp(3rem, 1.5rem + 7vw, 8.5rem);
+    /* Syne is very wide: a 9–10 letter word is ~11.5× the font size, so scale with the viewport */
+    font-size: clamp(1.75rem, 7.6vw, 8.5rem);
     line-height: 0.9;
   }
   .footer-intro {

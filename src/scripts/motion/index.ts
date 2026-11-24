@@ -9,6 +9,7 @@ import { initHeroCanvas } from './heroCanvas';
 import {
   getLenis,
   initMagnetic,
+  initMarquee,
   initParallax,
   initReveals,
   initSmoothScroll,
@@ -27,6 +28,7 @@ initTilt();
 initMagnetic();
 initParallax();
 initReveals();
+initMarquee();
 
 // Hero lines ([data-reveal="manual"]) wait for the intro curtain.
 introDone.then(() =>

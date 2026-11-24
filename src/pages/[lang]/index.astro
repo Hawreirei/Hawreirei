@@ -1,10 +1,19 @@
 ---
+/**
+ * Homepage (issue #6): hero · three doors · programmes · philosophy · Problem of the Week.
+ * Closing CTA is the site footer (#5). All copy is placeholder until the owner approves it.
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Card from '../../components/Card.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
+import BracketLabel from '../../components/BracketLabel.astro';
+import InvertRow from '../../components/InvertRow.astro';
+import Marquee from '../../components/Marquee.astro';
+import StatsStrip from '../../components/StatsStrip.astro';
 import type { Lang } from '../../i18n/ui';
 import { langs, useTranslations, localizedPath } from '../../i18n/utils';
+import { programmes, stats } from '../../data/programmes';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -17,17 +26,29 @@ const id = lang === 'id';
 // Hero background (owner's choice, issue #4): 3D surface on screens ≥768px, function plane on phones.
 const HERO_VARIANT = 'mix' as const;
 
-// Placeholder doors — real pages arrive in issues #8, #9 and #13; full homepage in #6.
 const doors = [
   { n: '001', key: 'hire', path: 'hire', viz: 'squares', span: 7, start: 1, drop: '0', ratio: '16 / 10', parallax: '0.03' },
   { n: '002', key: 'learn', path: 'learn', viz: 'lissajous', span: 5, start: 8, drop: '9rem', ratio: '1 / 1', parallax: '-0.04' },
   { n: '003', key: 'resources', path: 'resources', viz: 'phyllotaxis', span: 6, start: 2, drop: '0', ratio: '16 / 10', parallax: '-0.03' },
 ] as const;
+
+const principles = id
+  ? [
+      { n: '01', title: 'Konsep', text: 'Mulai dari masalah nyata dan gambar, bukan dari rumus.' },
+      { n: '02', title: 'Latihan', text: 'Latihan bertahap sampai prosedur terasa ringan.' },
+      { n: '03', title: 'Refleksi', text: 'Siswa menjelaskan kembali — kalau bisa menjelaskan, berarti paham.' },
+    ]
+  : [
+      { n: '01', title: 'Concept', text: 'Start from a real problem and a picture, not a formula.' },
+      { n: '02', title: 'Practice', text: 'Step-by-step practice until the procedure feels light.' },
+      { n: '03', title: 'Reflect', text: 'Students explain it back — if they can explain it, they understand it.' },
+    ];
 ---
 
 <BaseLayout lang={lang}>
   <Hero lang={lang} variant={HERO_VARIANT} />
 
+  <!-- 001 · Three doors -->
   <section class="section" id="doors">
     <div class="container">
       <div class="fade-up">
@@ -58,6 +79,114 @@ const doors = [
       </div>
     </div>
   </section>
+
+  <!-- 002 · Programmes -->
+  <section class="programmes" aria-labelledby="programmes-title">
+    <Marquee items={programmes.map((p) => p.title[lang])} separator="∑" label={id ? 'Program' : 'Programmes'} />
+    <div class="container section-pad">
+      <div class="g12 prog-grid">
+        <div class="fade-up prog-intro" style="--span: 4">
+          <BracketLabel index="002" text={id ? 'Program les' : 'Programmes'} />
+          <h2 class="h2" id="programmes-title">{id ? 'Lima jalur belajar.' : 'Five ways to learn.'}</h2>
+          <p class="muted">
+            {
+              id
+                ? 'Dari dasar SD sampai olimpiade — setiap program disesuaikan dengan target siswa.'
+                : 'From primary foundations to olympiad — each programme is tailored to the student’s goal.'
+            }
+          </p>
+        </div>
+        <div class="fade-up rows" style="--span: 8; --i: 1">
+          {
+            programmes.map((p, i) => (
+              <InvertRow
+                index={String(i + 1).padStart(2, '0')}
+                title={p.title[lang]}
+                meta={p.meta[lang]}
+                href={`${localizedPath(lang, 'learn')}#${p.slug}`}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 003 · Philosophy -->
+  <section class="section" aria-labelledby="philosophy-title">
+    <div class="container g12 philosophy">
+      <div class="fade-up" style="--span: 12">
+        <BracketLabel index="003" text={id ? 'Filosofi mengajar' : 'Teaching philosophy'} />
+        <h2 class="display philo-title" id="philosophy-title">
+          {id ? 'Pahami dulu.' : 'Understand first.'}<br /><span class="outline">{id ? 'Lalu cepat.' : 'Then fast.'}</span>
+        </h2>
+      </div>
+      <div class="fade-up philo-body" style="--span: 6; --start: 7; --i: 1">
+        <p class="lead">
+          {
+            id
+              ? 'Matematika bukan hafalan rumus. Saya mulai dari masalah nyata, membangun pemahaman konsep, lalu melatih kelancaran — sampai siswa bisa menjelaskan mengapa, bukan hanya bagaimana.'
+              : 'Math isn’t memorising formulas. I start from a real problem, build conceptual understanding, then train fluency — until students can explain why, not just how.'
+          }
+        </p>
+        <ol class="principles">
+          {
+            principles.map((p) => (
+              <li>
+                <span class="mono muted">{p.n}</span>
+                <div>
+                  <h3 class="h3">{p.title}</h3>
+                  <p class="muted">{p.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        {stats.length > 0 && <StatsStrip items={stats.map((s) => ({ value: s.value, unit: s.unit, label: s.label[lang] }))} />}
+      </div>
+    </div>
+  </section>
+
+  <!-- 004 · Problem of the Week (SAMPLE — real problems arrive with issue #14) -->
+  <section class="section potw" aria-labelledby="potw-title">
+    <div class="container g12 potw-grid">
+      <div class="fade-up" style="--span: 5">
+        <BracketLabel index="004" text={id ? 'Soal minggu ini · contoh' : 'Problem of the week · sample'} />
+        <h2 class="h2" id="potw-title">{id ? 'Berapa angka satuan dari 7²⁰²⁶?' : 'What is the last digit of 7²⁰²⁶?'}</h2>
+        <details class="solution">
+          <summary class="mono" data-cursor="?">
+            <span>{id ? 'Lihat pembahasan' : 'Show solution'}</span>
+            <span aria-hidden="true" class="plus">+</span>
+          </summary>
+          <div class="solution-body">
+            {
+              id ? (
+                <p>
+                  Angka satuan pangkat 7 berulang setiap 4: 7, 9, 3, 1, 7, 9, … Karena 2026 = 4 · 506 + 2, angka satuannya sama
+                  dengan 7² = 49. <strong>Jawaban: 9.</strong>
+                </p>
+              ) : (
+                <p>
+                  The last digits of powers of 7 repeat every 4: 7, 9, 3, 1, 7, 9, … Since 2026 = 4 · 506 + 2, the last digit is the
+                  same as for 7² = 49. <strong>Answer: 9.</strong>
+                </p>
+              )
+            }
+          </div>
+        </details>
+      </div>
+      <div class="potw-visual" style="--span: 6; --start: 7" data-parallax="-0.06" aria-hidden="true">
+        <p class="display potw-expr">7<sup>2026</sup></p>
+        <p class="mono muted potw-mod">≡ ? (mod 10)</p>
+        <ul class="cycle mono">
+          <li>7¹ → 7</li>
+          <li>7² → 9</li>
+          <li>7³ → 3</li>
+          <li>7⁴ → 1</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
@@ -65,5 +194,130 @@ const doors = [
     margin-top: clamp(4rem, 8vw, 6rem);
     row-gap: clamp(4rem, 8vw, 8rem);
     align-items: start;
+  }
+
+  /* programmes */
+  .programmes {
+    border-bottom: var(--hairline);
+  }
+  .section-pad {
+    padding-block: var(--section-y);
+  }
+  .prog-grid {
+    align-items: start;
+  }
+  .prog-intro {
+    display: grid;
+    gap: var(--space-5);
+  }
+  @media (min-width: 1024px) {
+    .prog-intro {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+    }
+  }
+  .rows {
+    border-top: var(--hairline);
+  }
+
+  /* philosophy */
+  .philosophy {
+    align-items: start;
+    row-gap: clamp(3rem, 6vw, 5rem);
+  }
+  .philo-title {
+    margin-top: var(--space-5);
+    /* longest word ("UNDERSTAND") must fit the container at every width */
+    font-size: clamp(1.5rem, 7.4vw, 8rem);
+  }
+  .philo-body {
+    display: grid;
+    gap: var(--space-7);
+  }
+  .principles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--hairline);
+  }
+  .principles li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    border-bottom: var(--hairline);
+  }
+  .principles .h3 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  /* problem of the week */
+  .potw {
+    overflow: hidden;
+  }
+  .potw-grid {
+    align-items: center;
+  }
+  .potw .h2 {
+    margin-top: var(--space-5);
+  }
+  .solution {
+    margin-top: var(--space-6);
+    border-top: var(--hairline);
+    border-bottom: var(--hairline);
+  }
+  .solution summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--space-4);
+    cursor: pointer;
+    list-style: none;
+  }
+  .solution summary::-webkit-details-marker {
+    display: none;
+  }
+  .plus {
+    font-size: 1.25rem;
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .solution[open] .plus {
+    transform: rotate(45deg);
+  }
+  .solution-body {
+    padding-bottom: var(--space-5);
+    max-width: 52ch;
+    line-height: 1.7;
+  }
+  .potw-visual {
+    position: relative;
+  }
+  .potw-expr {
+    font-size: clamp(5rem, 2rem + 14vw, 16rem);
+    line-height: 0.85;
+  }
+  .potw-expr sup {
+    font-size: 0.32em;
+    vertical-align: top;
+    position: relative;
+    top: 0.15em;
+    margin-left: 0.05em;
+    letter-spacing: -0.02em;
+  }
+  .potw-mod {
+    margin-top: var(--space-6);
+    font-size: var(--text-lg);
+    text-transform: none;
+  }
+  .cycle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    margin: var(--space-6) 0 0;
+    padding: var(--space-4) 0 0;
+    list-style: none;
+    border-top: var(--hairline);
+    color: var(--muted);
   }
 </style>

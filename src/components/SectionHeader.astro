@@ -13,7 +13,7 @@ const { index, label, note, id } = Astro.props;
 
 <header class="section-header g12">
   <div style="--span: 3"><BracketLabel index={index} text={label} /></div>
-  <h2 class="h2" id={id} style="--span: 6"><slot /></h2>
+  <h2 class="h2 sh-title" id={id} style="--span: 6"><slot /></h2>
   {note && <p class="label sh-note" style="--span: 3">{note}</p>}
 </header>
 
@@ -23,6 +23,12 @@ const { index, label, note, id } = Astro.props;
     row-gap: var(--space-4);
     padding-bottom: clamp(3rem, 6vw, 6rem);
     border-bottom: var(--hairline);
+  }
+  /* mid-size screens: give the heading more room */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .section-header > .sh-title {
+      grid-column: auto / span 9;
+    }
   }
   @media (min-width: 1024px) {
     .sh-note {

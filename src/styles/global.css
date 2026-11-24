@@ -149,7 +149,7 @@ p {
 .h2 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--text-3xl);
+  font-size: clamp(1.75rem, 1.1rem + 3.2vw, 4.5rem);
   text-transform: uppercase;
   letter-spacing: var(--tracking-tightest);
   line-height: 0.95;
@@ -186,6 +186,13 @@ p {
 
 .label {
   color: var(--muted);
+}
+
+/* Last resort: Syne is very wide — let a single word that can't fit wrap instead of overflowing */
+.display,
+.h2,
+.h3 {
+  overflow-wrap: break-word;
 }
 
 /* ---------- Layout ---------- */

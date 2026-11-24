@@ -138,3 +138,21 @@ export function initTelemetry() {
     setInterval(tick, 1000);
   }
 }
+
+/* ---------- Marquee: speed follows scroll velocity ([data-marquee]) ---------- */
+export function initMarquee(root: ParentNode = document) {
+  if (prefersReducedMotion()) return;
+  const anims = [...root.querySelectorAll<HTMLElement>('[data-marquee] .marquee-track')]
+    .map((el) => el.getAnimations()[0])
+    .filter(Boolean) as Animation[];
+  if (!anims.length) return;
+  let lastY = scrollY;
+  let rate = 1;
+  onTick(() => {
+    const v = Math.abs(scrollY - lastY);
+    lastY = scrollY;
+    const target = 1 + Math.min(v * 0.35, 6);
+    rate += (target - rate) * 0.08;
+    anims.forEach((a) => (a.playbackRate = rate));
+  });
+}
