@@ -189,6 +189,80 @@ html:not(.js) .fade-up {
   }
 }
 
+/* ---------- Rolling letters ([data-roll], split by text.ts) ---------- */
+/* the split wrapper must not change the heading's own layout (e.g. grid rows) */
+.split-visual {
+  display: contents;
+}
+.roll .rw {
+  display: inline-block;
+  white-space: nowrap;
+}
+.roll .rc {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* room for serif italic overhang and descenders */
+  padding: 0.06em 0.04em 0.12em;
+  margin: -0.06em -0.04em -0.12em;
+}
+.roll .rc-in {
+  position: relative;
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.85s var(--ease-out-expo);
+  transition-delay: calc(var(--ci) * 0.022s);
+}
+.roll .rc-in::after {
+  content: attr(data-ch);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  padding-top: 0.18em;
+}
+.roll.is-rolled .rc-in {
+  transform: translateY(0);
+}
+/* hover: letters roll up to reveal their copy (desktop) */
+@media (hover: hover) {
+  .roll.is-rolled:hover .rc-in {
+    transform: translateY(calc(-100% - 0.18em));
+    transition-duration: 0.55s;
+    transition-delay: calc(var(--ci) * 0.012s);
+  }
+}
+
+/* ---------- Scroll-fill paragraph ([data-fill]) ---------- */
+.fill .fw {
+  color: color-mix(in srgb, var(--muted) 55%, transparent);
+  transition: color 0.35s ease;
+}
+.fill .fw.on {
+  color: var(--fg);
+}
+
+/* ---------- Horizontal scroll strip ([data-hscroll]) ---------- */
+[data-hscroll].is-pinned .hs-sticky {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100vh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+[data-hscroll-track] {
+  will-change: transform;
+}
+[data-hscroll]:not(.is-pinned) [data-hscroll-track] {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+[data-hscroll]:not(.is-pinned) [data-hscroll-track] > * {
+  scroll-snap-align: start;
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   @view-transition {

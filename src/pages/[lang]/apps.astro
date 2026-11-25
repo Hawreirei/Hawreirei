@@ -29,7 +29,7 @@ const pad = (n: number) => String(n).padStart(3, '0');
       <BracketLabel index="000" text={id ? 'Aplikasi buatan saya' : 'Apps I built'} />
       <h1 class="display page-title" data-reveal>
         <span class="reveal-mask"><span class="reveal-line" style="--i: 0">{id ? 'Aplikasi' : 'Apps'}</span></span>
-        <span class="reveal-mask"><span class="reveal-line outline" style="--i: 1">{id ? 'untuk kelas.' : 'for class.'}</span></span>
+        <span class="reveal-mask"><span class="reveal-line serif" style="--i: 1">{id ? 'untuk kelas.' : 'for class.'}</span></span>
       </h1>
       <div class="g12">
         <p class="lead muted fade-up" style="--span: 6; --start: 7; --i: 2">
@@ -59,7 +59,7 @@ const pad = (n: number) => String(n).padStart(3, '0');
           </div>
           <div class="app-text fade-up" style={i % 2 ? '--span: 4; --start: 1; --i: 1' : '--span: 4; --start: 9; --i: 1'}>
             <p class="label">{pad(i + 1)} / {app.kind[lang]}</p>
-            <h2 class="h2" id={`${app.slug}-title`}>{app.title}</h2>
+            <h2 class="h2" id={`${app.slug}-title`} data-roll>{app.title}</h2>
             <p class="app-desc">{app.description[lang]}</p>
             <p class="label">[ {app.tags[lang].join(' / ')} ]</p>
             <div class="app-links">

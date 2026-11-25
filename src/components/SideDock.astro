@@ -1,0 +1,97 @@
+---
+/** Floating vertical icon dock on the left (desktop mouse only). */
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localizedPath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const items = [
+  { key: 'home', href: localizedPath(lang), icon: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z' },
+  { key: 'about', href: localizedPath(lang, 'about'), icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0' },
+  { key: 'learn', href: localizedPath(lang, 'learn'), icon: 'M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3' },
+  { key: 'apps', href: localizedPath(lang, 'apps'), icon: 'M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z' },
+  { key: 'contact', href: '#contact', icon: 'M3 6h18v12H3zM3 7l9 6 9-6' },
+] as const;
+const here = Astro.url.pathname.replace(/\/?$/, '/');
+---
+
+<nav class="dock" aria-label={t('dock.label')}>
+  {
+    items.map((it) => (
+      <a href={it.href} class="dock-item" aria-current={here === it.href ? 'page' : undefined} data-cursor="GO">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d={it.icon} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />
+        </svg>
+        <span class="dock-tip mono">{t(`nav.${it.key}`)}</span>
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .dock {
+    position: fixed;
+    left: clamp(0.75rem, 1.2vw, 1.25rem);
+    top: 50%;
+    z-index: 55;
+    display: none;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.4rem;
+    border: var(--hairline);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(10px);
+    transform: translateY(-50%);
+  }
+  @media (min-width: 1280px) and (hover: hover) {
+    .dock {
+      display: flex;
+    }
+  }
+  :global(.menu-open) .dock {
+    display: none;
+  }
+  .dock-item {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: calc(var(--radius-lg) - 0.4rem);
+    color: var(--muted);
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease;
+  }
+  .dock-item:hover,
+  .dock-item:focus-visible,
+  .dock-item[aria-current='page'] {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .dock-tip {
+    position: absolute;
+    left: calc(100% + 0.75rem);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--fg);
+    color: var(--bg);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-6px);
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      transform 0.3s var(--ease-out-expo);
+  }
+  .dock-item:hover .dock-tip,
+  .dock-item:focus-visible .dock-tip {
+    opacity: 1;
+    transform: none;
+  }
+</style>

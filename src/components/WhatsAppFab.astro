@@ -11,7 +11,7 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<a class="wa-fab mono" href={waLink(lang)} target="_blank" rel="noopener" aria-label={t('wa.fab')}>
+<a class="wa-fab mono" href={waLink(lang)} target="_blank" rel="noopener" aria-label={t('wa.fab')} title={t('wa.fab')} data-cursor="WA">
   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
     <path
       fill="none"
@@ -46,9 +46,27 @@ const t = useTranslations(lang);
   .wa-fab:active {
     transform: scale(0.95);
   }
+  /* desktop: round chat bubble, label as tooltip */
   @media (min-width: 1024px) {
     .wa-fab {
+      width: 3.4rem;
+      height: 3.4rem;
+      padding: 0;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--fg);
+      border: var(--hairline);
+    }
+    .wa-fab:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .wa-fab span {
       display: none;
+    }
+    .wa-fab svg {
+      width: 22px;
+      height: 22px;
     }
   }
   :global(.menu-open) .wa-fab {

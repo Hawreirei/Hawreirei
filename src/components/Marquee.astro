@@ -7,11 +7,12 @@ interface Props {
   items: string[];
   separator?: string;
   label?: string;
+  variant?: 'outline' | 'band';
 }
-const { items, separator = '✦', label } = Astro.props;
+const { items, separator = '✦', label, variant = 'outline' } = Astro.props;
 ---
 
-<div class="marquee" data-marquee role="region" aria-label={label}>
+<div class:list={['marquee', `marquee--${variant}`]} data-marquee role="region" aria-label={label}>
   <div class="marquee-track">
     {
       [0, 1].map((copy) => (
@@ -63,7 +64,25 @@ const { items, separator = '✦', label } = Astro.props;
     text-transform: uppercase;
     white-space: nowrap;
   }
-  .marquee-group li:nth-child(even) .marquee-item {
+  .marquee--band {
+    background: var(--fg);
+    color: var(--bg);
+    border: 0;
+  }
+  .marquee--band .marquee-item {
+    font-size: clamp(1.75rem, 1rem + 3vw, 3.75rem);
+    text-transform: none;
+  }
+  .marquee--band li:nth-child(even) .marquee-item {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .marquee--band .marquee-sep {
+    color: color-mix(in srgb, var(--bg) 55%, transparent);
+  }
+  .marquee--outline .marquee-group li:nth-child(even) .marquee-item {
     color: var(--bg);
     -webkit-text-stroke: 3px var(--fg);
     paint-order: stroke fill;

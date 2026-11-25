@@ -5,11 +5,13 @@
 import { initIntro, introDone } from './intro';
 import { initCursor } from './cursor';
 import { initMathViz } from './mathviz';
+import { initFill, initRoll } from './text';
 import { initHeroCanvas } from './heroCanvas';
 import {
   getLenis,
   initMagnetic,
   initMarquee,
+  initHScroll,
   initParallax,
   initReveals,
   initSmoothScroll,
@@ -29,6 +31,9 @@ initMagnetic();
 initParallax();
 initReveals();
 initMarquee();
+initRoll();
+initFill();
+initHScroll();
 
 // Hero lines ([data-reveal="manual"]) wait for the intro curtain.
 introDone.then(() =>

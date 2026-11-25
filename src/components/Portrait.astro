@@ -3,17 +3,18 @@
 import { Picture } from 'astro:assets';
 import portrait from '../assets/photo/itman-portrait.jpg';
 import square from '../assets/photo/itman-square.jpg';
+import cutout from '../assets/photo/itman-cutout.png';
 import type { Lang } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
-  shape?: 'portrait' | 'square';
+  shape?: 'portrait' | 'square' | 'cutout';
   caption?: boolean;
   eager?: boolean;
   class?: string;
 }
 const { lang, shape = 'portrait', caption = true, eager = false, class: className } = Astro.props;
-const src = shape === 'portrait' ? portrait : square;
+const src = shape === 'portrait' ? portrait : shape === 'square' ? square : cutout;
 const alt = lang === 'id' ? 'Itman Arif Hariri, guru matematika' : 'Itman Arif Hariri, math teacher';
 ---
 
@@ -48,6 +49,16 @@ const alt = lang === 'id' ? 'Itman Arif Hariri, guru matematika' : 'Itman Arif H
     border: var(--hairline);
     border-radius: var(--radius);
     background: #fff;
+  }
+  /* cut-out: no frame, the person stands on the page */
+  .portrait--cutout .portrait-frame {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  .portrait--cutout:hover .portrait-frame :global(img) {
+    transform: none;
   }
   .portrait-frame :global(img) {
     display: block;

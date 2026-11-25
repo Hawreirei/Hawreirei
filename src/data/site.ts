@@ -39,3 +39,6 @@ export const nav = [
 
 /** Short links shown in the desktop header. */
 export const headerNav = ['hire', 'learn', 'resources'] as const;
+
+/** Tools shown in the tools band and as chips beside the About photo (confirmed by the owner). */
+export const tools = ['GeoGebra', 'Desmos', 'LaTeX', 'Canva', 'Google Classroom', 'HTML & JavaScript'];

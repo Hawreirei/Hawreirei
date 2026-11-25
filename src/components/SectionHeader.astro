@@ -13,7 +13,7 @@ const { index, label, note, id } = Astro.props;
 
 <header class="section-header g12">
   <div style="--span: 3"><BracketLabel index={index} text={label} /></div>
-  <h2 class="h2 sh-title" id={id} style="--span: 6"><slot /></h2>
+  <h2 class="h2 sh-title" id={id} style="--span: 6" data-roll><slot /></h2>
   {note && <p class="label sh-note" style="--span: 3">{note}</p>}
 </header>
 

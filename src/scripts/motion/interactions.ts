@@ -156,3 +156,46 @@ export function initMarquee(root: ParentNode = document) {
     anims.forEach((a) => (a.playbackRate = rate));
   });
 }
+
+/* ---------- Horizontal scroll strip ([data-hscroll] > [data-hscroll-track]) ---------- */
+export function initHScroll(root: ParentNode = document) {
+  const sections = [...root.querySelectorAll<HTMLElement>('[data-hscroll]')];
+  if (!sections.length) return;
+  const reduced = prefersReducedMotion();
+
+  const setup = () =>
+    sections.forEach((sec) => {
+      const track = sec.querySelector<HTMLElement>('[data-hscroll-track]');
+      if (!track) return;
+      const pinned = isDesktop() && hasFinePointer() && !reduced;
+      sec.classList.toggle('is-pinned', pinned);
+      if (!pinned) {
+        sec.style.height = '';
+        track.style.transform = '';
+        return;
+      }
+      const overflow = Math.max(0, track.scrollWidth - track.clientWidth);
+      const header = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
+      sec.dataset.overflow = String(overflow);
+      sec.dataset.header = String(header);
+      // pinned area is the viewport minus the sticky header; extra height = horizontal travel
+      sec.style.height = `${innerHeight - header + overflow}px`;
+    });
+
+  setup();
+  addEventListener('resize', setup);
+  new ResizeObserver(setup).observe(document.body);
+
+  onTick(() =>
+    sections.forEach((sec) => {
+      if (!sec.classList.contains('is-pinned')) return;
+      const track = sec.querySelector<HTMLElement>('[data-hscroll-track]');
+      const overflow = parseFloat(sec.dataset.overflow || '0');
+      if (!track || !overflow) return;
+      const r = sec.getBoundingClientRect();
+      const header = parseFloat(sec.dataset.header || '0');
+      const p = Math.min(1, Math.max(0, (header - r.top) / overflow));
+      track.style.transform = `translate3d(${(-p * overflow).toFixed(1)}px, 0, 0)`;
+    }),
+  );
+}

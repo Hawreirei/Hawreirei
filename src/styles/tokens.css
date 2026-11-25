@@ -1,18 +1,18 @@
 /*
- * VOID / 01 — design tokens (issue #3)
- * Grayscale only. Two themes: white and "void" (black).
+ * VOID / 01 — design tokens (issue #3), blended with warm editorial reference (warm paper + warm ink).
+ * Warm grayscale only (one exception: the green "available" status dot). Two themes: paper and "void".
  * Set on <html data-theme="light|dark"> by the inline script in BaseLayout:
  * saved choice → device prefers-color-scheme → white.
  */
 
 :root,
 :root[data-theme='light'] {
-  --bg: #ffffff;
-  --surface: #f5f5f5;
-  --elevated: #ebebeb;
-  --border: #dddddd;
-  --muted: #6e6e6e; /* 5.1:1 on white, 4.7:1 on surface — WCAG AA */
-  --fg: #000000;
+  --bg: #fbf9f3; /* warm paper */
+  --surface: #f4f1e8;
+  --elevated: #e9e5dc;
+  --border: #e2ddd2;
+  --muted: #6f6b63; /* 5.0:1 on paper, 4.7:1 on surface — WCAG AA */
+  --fg: #161412; /* warm ink */
 
   --grain-opacity: 0.05;
   --hairline-alpha: 6%;
@@ -20,15 +20,15 @@
 }
 
 :root[data-theme='dark'] {
-  --bg: #000000;
-  --surface: #0a0a0a;
-  --elevated: #141414;
-  --border: #222222;
-  --muted: #888888; /* 5.9:1 on black — WCAG AA */
-  --fg: #ffffff;
+  --bg: #141210; /* warm void */
+  --surface: #1c1a17;
+  --elevated: #24211d;
+  --border: #2e2a25;
+  --muted: #8f8b82; /* 5.5:1 on void — WCAG AA */
+  --fg: #f6f3ec;
 
   --grain-opacity: 0.045;
-  --hairline-alpha: 3.5%;
+  --hairline-alpha: 4%;
   color-scheme: dark;
 }
 
@@ -37,6 +37,7 @@
   --font-display: 'Syne Variable', 'Space Grotesk Variable', system-ui, sans-serif;
   --font-sans: 'Space Grotesk Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
 
   --tracking-brutal: -0.05em;
   --tracking-tightest: -0.035em;
@@ -72,7 +73,10 @@
   --header-h: clamp(3.5rem, 3rem + 1vw, 4rem);
 
   /* Shape & depth */
-  --radius: 2px;
+  --radius: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --status: #22c55e; /* only colour on the site: availability dot */
   --hairline: 1px solid var(--border);
   --shadow-float: 0 30px 70px -20px color-mix(in srgb, var(--fg) 12%, transparent);
 
@@ -82,4 +86,11 @@
   --dur-fast: 0.2s;
   --dur-base: 0.4s;
   --dur-slow: 0.9s;
+}
+
+/* Wide screens with a mouse: wider side margins leave a lane for the floating dock */
+@media (min-width: 1280px) and (hover: hover) {
+  :root {
+    --gutter: 5.5rem;
+  }
 }

@@ -6,6 +6,7 @@
  *   variant="mix"     — owner's choice: surface on screens ≥768px, plane on phones
  */
 import BracketLabel from './BracketLabel.astro';
+import StatusPill from './StatusPill.astro';
 import type { Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
 
@@ -35,6 +36,7 @@ const t = useTranslations(lang);
     </div>
 
     <div class="hero-main">
+      <div class="hero-pill fade-up" style="--i: 3"><StatusPill lang={lang} /></div>
       <div class="hero-kicker label">
         <span>[ 000 ]</span>
         <span class="rule" aria-hidden="true"></span>
@@ -43,7 +45,7 @@ const t = useTranslations(lang);
 
       <h1 class="display hero-title" data-reveal="manual">
         <span class="reveal-mask"><span class="reveal-line" style="--i: 0">Itman</span></span>
-        <span class="reveal-mask indent"><span class="reveal-line outline" style="--i: 1">Arif</span></span>
+        <span class="reveal-mask indent"><span class="reveal-line serif" style="--i: 1">Arif</span></span>
         <span class="reveal-mask"><span class="reveal-line" style="--i: 2">Hariri</span></span>
       </h1>
 
@@ -118,6 +120,13 @@ const t = useTranslations(lang);
   }
   .hero-main {
     padding-block: var(--space-6);
+  }
+  .hero-pill {
+    margin-bottom: var(--space-5);
+  }
+  .hero-title .serif {
+    font-size: 1.12em;
+    line-height: 0.8;
   }
   .hero-kicker {
     display: flex;
