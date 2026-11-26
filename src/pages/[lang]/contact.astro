@@ -1,0 +1,231 @@
+---
+/** Contact page (issue #10): WhatsApp + email, copy buttons, link to FAQ. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BracketLabel from '../../components/BracketLabel.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import type { Lang } from '../../i18n/ui';
+import { langs, useTranslations, localizedPath } from '../../i18n/utils';
+import { contact, mailLink, waLink } from '../../data/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+const id = lang === 'id';
+---
+
+<BaseLayout
+  lang={lang}
+  title={t('nav.contact')}
+  description={id
+    ? 'Hubungi Itman Arif Hariri lewat WhatsApp atau email untuk les matematika, kerja sama sekolah, atau pertanyaan lain.'
+    : 'Contact Itman Arif Hariri on WhatsApp or by email about math tutoring, school roles, or anything else.'}
+>
+  <section class="section page-head">
+    <div class="container head-grid">
+      <BracketLabel index="000" text={t('nav.contact')} />
+      <h1 class="display page-title" data-reveal>
+        <span class="reveal-mask"><span class="reveal-line" style="--i: 0">{id ? 'Mari' : "Let's"}</span></span>
+        <span class="reveal-mask"><span class="reveal-line serif" style="--i: 1">{id ? 'bicara.' : 'talk.'}</span></span>
+      </h1>
+      <div class="g12">
+        <div class="head-side fade-up" style="--span: 6; --start: 7; --i: 2">
+          <p class="lead muted">
+            {
+              id
+                ? 'Untuk sekolah, orang tua, dan siswa — kirim pesan lewat WhatsApp atau email. Saya akan membalas secepatnya.'
+                : 'For schools, parents and students — send a message on WhatsApp or by email. I will reply as soon as I can.'
+            }
+          </p>
+          <StatusPill lang={lang} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-label={id ? 'Cara menghubungi' : 'Ways to get in touch'}>
+    <div class="container g12 cards">
+      <!-- WhatsApp -->
+      <article class="contact-card wa fade-up" style="--span: 7">
+        <p class="label">( 01 ) WhatsApp</p>
+        <h2 class="card-title">
+          {id ? 'Chat ' : 'Chat on '}<span class="serif">{id ? 'langsung.' : 'WhatsApp.'}</span>
+        </h2>
+        <p class="muted">
+          {
+            id
+              ? 'Cara tercepat untuk bertanya tentang program, jadwal, atau biaya. Pesan pembuka sudah disiapkan.'
+              : 'The quickest way to ask about programmes, scheduling or fees. An opening message is ready for you.'
+          }
+        </p>
+        <div class="card-actions">
+          <a class="btn-solid mono" href={waLink(lang)} target="_blank" rel="noopener" data-cursor="WA" data-magnetic-btn>
+            {t('footer.wa')} <span aria-hidden="true">↗</span>
+          </a>
+          <CopyButton value={contact.whatsappDisplay} lang={lang} />
+        </div>
+      </article>
+
+      <!-- Email -->
+      <article class="contact-card fade-up" style="--span: 5; --i: 1">
+        <p class="label">( 02 ) Email</p>
+        <h2 class="card-title">
+          {id ? 'Kirim ' : 'Send an '}<span class="serif">{id ? 'email.' : 'email.'}</span>
+        </h2>
+        <p class="muted">
+          {
+            id
+              ? 'Cocok untuk sekolah dan pertanyaan yang lebih panjang, atau untuk mengirim berkas.'
+              : 'Best for schools and longer questions, or to send files.'
+          }
+        </p>
+        <div class="card-actions">
+          <CopyButton value={contact.email} lang={lang} />
+          <a class="btn-line mono" href={mailLink(lang)} data-cursor="MAIL">
+            {id ? 'Tulis email' : 'Write email'} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- FAQ link -->
+      <a class="faq-link fade-up" href={`${localizedPath(lang, 'learn')}#faq`} style="--span: 12; --i: 2" data-cursor="FAQ">
+        <span class="label">( 03 ) FAQ</span>
+        <span class="faq-text">
+          {id ? 'Jadwal, format, biaya? Lihat ' : 'Schedule, format, fees? See the '}<span class="serif">{id ? 'pertanyaan umum' : 'common questions'}</span>
+          <span aria-hidden="true">→</span>
+        </span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .head-grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .page-title {
+    font-size: clamp(2.5rem, 13vw, 13rem);
+  }
+  .page-title .serif {
+    font-size: 1.05em;
+  }
+  .head-side {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+  }
+  .cards {
+    align-items: stretch;
+    row-gap: var(--space-5);
+  }
+  .contact-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: var(--hairline);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .contact-card.wa {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .contact-card.wa .muted,
+  .contact-card.wa .label {
+    color: color-mix(in srgb, var(--bg) 70%, var(--fg));
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 1rem + 3.5vw, 4.5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-tightest);
+    overflow-wrap: break-word;
+  }
+  .card-title .serif {
+    font-size: 1.05em;
+  }
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .btn-solid,
+  .btn-line {
+    display: inline-flex;
+    gap: var(--space-2);
+    padding: 0.95rem 1.4rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-label);
+    text-decoration: none;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      transform 0.35s var(--ease-out-expo);
+  }
+  /* inside the dark WhatsApp card the solid button is paper-coloured */
+  .wa .btn-solid {
+    background: var(--bg);
+    color: var(--fg);
+    border-color: var(--bg);
+  }
+  .wa .btn-solid:hover {
+    background: transparent;
+    color: var(--bg);
+  }
+  .btn-line {
+    color: var(--fg);
+  }
+  .btn-line:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .wa :global(.copy) {
+    background: transparent;
+    color: var(--bg);
+    border-color: color-mix(in srgb, var(--bg) 40%, transparent);
+  }
+  .wa :global(.copy:hover),
+  .wa :global(.copy.is-copied) {
+    background: var(--bg);
+    color: var(--fg);
+  }
+  .faq-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: var(--hairline);
+    border-radius: var(--radius-lg);
+    color: var(--fg);
+    text-decoration: none;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease;
+  }
+  .faq-link:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .faq-link:hover .label {
+    color: inherit;
+  }
+  .faq-text {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 0.9rem + 1.6vw, 2.25rem);
+    letter-spacing: var(--tracking-tight);
+  }
+</style>

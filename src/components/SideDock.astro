@@ -14,7 +14,7 @@ const items = [
   { key: 'about', href: localizedPath(lang, 'about'), icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0' },
   { key: 'learn', href: localizedPath(lang, 'learn'), icon: 'M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3' },
   { key: 'apps', href: localizedPath(lang, 'apps'), icon: 'M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z' },
-  { key: 'contact', href: '#contact', icon: 'M3 6h18v12H3zM3 7l9 6 9-6' },
+  { key: 'contact', href: localizedPath(lang, 'contact'), icon: 'M3 6h18v12H3zM3 7l9 6 9-6' },
 ] as const;
 const here = Astro.url.pathname.replace(/\/?$/, '/');
 ---

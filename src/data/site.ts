@@ -9,6 +9,8 @@ export const contact = {
   email: 'arifhariri2@gmail.com',
   /** International format, no + or leading 0 (Indonesia = 62). */
   whatsapp: '628881571820',
+  /** Human-readable WhatsApp number (shown on the Contact page). */
+  whatsappDisplay: '+62 888-1571-820',
   /** Pre-filled WhatsApp message per language. */
   waMessage: {
     id: 'Halo, saya ingin bertanya tentang les matematika.',
