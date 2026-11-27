@@ -1,0 +1,12 @@
+---
+/** "Petunjuk / Hint" toggle — a <Solution> with a different label (issue #14). */
+import Solution from './Solution.astro';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang?: Lang;
+}
+const lang = Astro.props.lang ?? (Astro.currentLocale as Lang | undefined) ?? 'id';
+---
+
+<Solution lang={lang} label={lang === 'id' ? 'Petunjuk' : 'Hint'}><slot /></Solution>

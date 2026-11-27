@@ -1,0 +1,96 @@
+---
+/** One Problem of the Week: meta, statement, hint, solution, big expression (issue #14). */
+import { render } from 'astro:content';
+import BracketLabel from './BracketLabel.astro';
+import Math from './Math.astro';
+import Hint from './Hint.astro';
+import Solution from './Solution.astro';
+import '../styles/math.css';
+import type { Lang } from '../i18n/ui';
+import { type Problem, levelLabel, formatDate } from '../lib/potw';
+
+interface Props {
+  problem: Problem;
+  lang: Lang;
+  index?: string;
+  heading?: 'h1' | 'h2';
+}
+const { problem, lang, index = '001', heading = 'h2' } = Astro.props;
+const { Content } = await render(problem);
+const id = lang === 'id';
+const H = heading;
+---
+
+<div class="g12 problem">
+  <div class="problem-main" style="--span: 7">
+    <div class="meta">
+      <BracketLabel index={index} text={id ? 'Soal minggu ini' : 'Problem of the week'} />
+      <p class="chips mono">
+        <span class="chip">{formatDate(problem.data.date, lang)}</span>
+        <span class="chip">{levelLabel(problem.data.level, lang)}</span>
+        {problem.data.sample && <span class="chip chip-sample">{id ? 'Contoh' : 'Sample'}</span>}
+      </p>
+    </div>
+    <H class="h2 problem-title" data-roll>{problem.data.title}</H>
+    <div class="prose problem-body">
+      <Content components={{ Hint, Solution }} />
+    </div>
+  </div>
+  {
+    problem.data.big && (
+      <div class="problem-big" style="--span: 4; --start: 9" aria-hidden="true" data-parallax="-0.04">
+        <Math tex={problem.data.big} display />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .problem {
+    align-items: start;
+  }
+  .meta {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+  }
+  .chip {
+    padding: 0.35rem 0.75rem;
+    border: var(--hairline);
+    border-radius: var(--radius-pill);
+  }
+  .chip-sample {
+    border-style: dashed;
+    color: var(--muted);
+  }
+  .problem-title {
+    margin-top: var(--space-5);
+  }
+  .problem-body {
+    margin-top: var(--space-6);
+  }
+  .problem-big {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-8));
+    display: grid;
+    place-items: center;
+    min-height: 16rem;
+    border: var(--hairline);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .problem-big :global(.katex) {
+    font-size: clamp(2.5rem, 1rem + 4vw, 5rem);
+  }
+  @media (max-width: 1023px) {
+    .problem-big {
+      display: none;
+    }
+  }
+</style>

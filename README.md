@@ -41,3 +41,37 @@ add a key to both `id` and `en` objects and use it with `t('key')`.
 ## Custom domain (later)
 
 In `astro.config.mjs`, set `site` to the new domain and remove `base` (issue #17).
+
+## Add a Problem of the Week
+
+Each week is one folder with one file per language:
+
+```
+src/content/potw/2026-11-30/id.mdx
+src/content/potw/2026-11-30/en.mdx
+```
+
+Copy last week's folder, rename it to the new Monday's date, and edit:
+
+```mdx
+---
+date: 2026-11-30        # Monday of the week; the newest date is "this week"
+title: Judul soal
+level: olympiad         # primary | edexcel | achievement-tests | tka-utbk-casn | olympiad
+big: "7^{2026}"         # optional big expression beside the problem (TeX)
+answer: "$9$"           # optional short answer
+sample: false           # true shows a "Sample / Contoh" badge
+draft: false            # true hides it without deleting
+---
+
+Soal di sini. Math: $x^2$ inline, $$\frac{a}{b}$$ on its own line.
+
+<Hint>Petunjuk singkat.</Hint>
+
+<Solution>Pembahasan lengkap.</Solution>
+```
+
+`<Hint>` and `<Solution>` need no import and label themselves in the page's language.
+Problems dated in the future stay hidden until the first build on or after that date.
+The four problems marked `sample: true` are placeholders — replace or delete them.
+

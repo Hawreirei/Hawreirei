@@ -1,0 +1,26 @@
+---
+date: 2026-11-23
+title: Last digit
+level: olympiad
+big: "7^{2026}"
+answer: "$9$"
+sample: true
+---
+
+**What is the last digit of $7^{2026}$?**
+
+<Hint>
+Work out the last digits of $7^1, 7^2, 7^3, 7^4, 7^5, \dots$ and look for a pattern.
+</Hint>
+
+<Solution>
+The last digits of $7^n$ repeat every 4: $7,\ 9,\ 3,\ 1,\ 7,\ 9,\ \dots$
+
+Since $2026 = 4 \cdot 506 + 2$, the last digit is the same as for $7^2 = 49$.
+
+$$
+7^{2026} \equiv 7^{2} \equiv 9 \pmod{10}
+$$
+
+**Answer: $9$.**
+</Solution>

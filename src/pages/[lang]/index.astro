@@ -13,7 +13,8 @@ import BracketLabel from '../../components/BracketLabel.astro';
 import InvertRow from '../../components/InvertRow.astro';
 import Marquee from '../../components/Marquee.astro';
 import Portrait from '../../components/Portrait.astro';
-import Math from '../../components/Math.astro';
+import ProblemView from '../../components/ProblemView.astro';
+import { getProblems } from '../../lib/potw';
 import type { Lang } from '../../i18n/ui';
 import { langs, useTranslations, localizedPath } from '../../i18n/utils';
 import { programmes, stats } from '../../data/programmes';
@@ -53,6 +54,7 @@ const steps = id
     ];
 
 const chipPos = ['c1', 'c2', 'c3', 'c4', 'c5'];
+const [latestProblem] = await getProblems(lang);
 ---
 
 <BaseLayout lang={lang}>
@@ -246,54 +248,21 @@ const chipPos = ['c1', 'c2', 'c3', 'c4', 'c5'];
     </div>
   </section>
 
-  <!-- 006 · Problem of the Week (SAMPLE — real problems arrive with issue #14) -->
-  <section class="section potw" aria-labelledby="potw-title">
-    <div class="container g12 potw-grid">
-      <div class="fade-up" style="--span: 5">
-        <BracketLabel index="006" text={id ? 'Soal minggu ini · contoh' : 'Problem of the week · sample'} />
-        <h2 class="h2" id="potw-title">{id ? 'Berapa angka satuan dari 7²⁰²⁶?' : 'What is the last digit of 7²⁰²⁶?'}</h2>
-        <details class="solution">
-          <summary class="mono" data-cursor="?">
-            <span>{id ? 'Lihat pembahasan' : 'Show solution'}</span>
-            <span aria-hidden="true" class="plus">+</span>
-          </summary>
-          <div class="solution-body">
-            {
-              id ? (
-                <p>
-                  Angka satuan <Math tex={String.raw`7^n`} /> berulang setiap 4: <Math tex={String.raw`7, 9, 3, 1, 7, 9, \dots`} />{' '}
-                  Karena <Math tex={String.raw`2026 = 4 \cdot 506 + 2`} />, angka satuannya sama dengan{' '}
-                  <Math tex={String.raw`7^2 = 49`} />.
-                </p>
-              ) : (
-                <p>
-                  The last digits of <Math tex={String.raw`7^n`} /> repeat every 4: <Math tex={String.raw`7, 9, 3, 1, 7, 9, \dots`} />{' '}
-                  Since <Math tex={String.raw`2026 = 4 \cdot 506 + 2`} />, the last digit is the same as for{' '}
-                  <Math tex={String.raw`7^2 = 49`} />.
-                </p>
-              )
-            }
-            <Math tex={String.raw`7^{2026} \equiv 7^{2} \equiv 9 \pmod{10}`} display />
-            {
-              <p>
-                <strong>{id ? 'Jawaban: 9.' : 'Answer: 9.'}</strong>
-              </p>
-            }
+  <!-- 006 · Problem of the Week (latest from src/content/potw, issue #14) -->
+  {
+    latestProblem && (
+      <section class="section potw" aria-label={id ? 'Soal minggu ini' : 'Problem of the week'}>
+        <div class="container">
+          <ProblemView problem={latestProblem} lang={lang} index="006" />
+          <div class="potw-more">
+            <a class="more-link mono" href={localizedPath(lang, 'potw')} data-cursor="ALL" data-magnetic-btn>
+              {id ? 'Semua soal' : 'All problems'} <span aria-hidden="true">→</span>
+            </a>
           </div>
-        </details>
-      </div>
-      <div class="potw-visual" style="--span: 6; --start: 7" data-parallax="-0.06" aria-hidden="true">
-        <p class="display potw-expr">7<sup>2026</sup></p>
-        <p class="mono muted potw-mod">≡ ? (mod 10)</p>
-        <ul class="cycle mono">
-          <li>7¹ → 7</li>
-          <li>7² → 9</li>
-          <li>7³ → 3</li>
-          <li>7⁴ → 1</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+        </div>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>
@@ -564,71 +533,26 @@ const chipPos = ['c1', 'c2', 'c3', 'c4', 'c5'];
   }
 
   /* problem of the week */
-  .potw {
-    overflow: hidden;
-  }
-  .potw-grid {
-    align-items: center;
-  }
-  .potw .h2 {
-    margin-top: var(--space-5);
-  }
-  .solution {
-    margin-top: var(--space-6);
-    border-top: var(--hairline);
-    border-bottom: var(--hairline);
-  }
-  .solution summary {
+  .potw-more {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-block: var(--space-4);
-    cursor: pointer;
-    list-style: none;
+    justify-content: flex-end;
+    margin-top: var(--space-7);
   }
-  .solution summary::-webkit-details-marker {
-    display: none;
+  .more-link {
+    display: inline-flex;
+    gap: var(--space-3);
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--fg);
+    border-radius: var(--radius-pill);
+    color: var(--fg);
+    text-decoration: none;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease,
+      transform 0.35s var(--ease-out-expo);
   }
-  .plus {
-    font-size: 1.25rem;
-    transition: transform 0.3s var(--ease-out-expo);
-  }
-  .solution[open] .plus {
-    transform: rotate(45deg);
-  }
-  .solution-body {
-    padding-bottom: var(--space-5);
-    max-width: 52ch;
-    line-height: 1.7;
-  }
-  .potw-visual {
-    position: relative;
-  }
-  .potw-expr {
-    font-size: clamp(5rem, 2rem + 14vw, 16rem);
-    line-height: 0.85;
-  }
-  .potw-expr sup {
-    font-size: 0.32em;
-    vertical-align: top;
-    position: relative;
-    top: 0.15em;
-    margin-left: 0.05em;
-    letter-spacing: -0.02em;
-  }
-  .potw-mod {
-    margin-top: var(--space-6);
-    font-size: var(--text-lg);
-    text-transform: none;
-  }
-  .cycle {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-5);
-    margin: var(--space-6) 0 0;
-    padding: var(--space-4) 0 0;
-    list-style: none;
-    border-top: var(--hairline);
-    color: var(--muted);
+  .more-link:hover {
+    background: var(--fg);
+    color: var(--bg);
   }
 </style>

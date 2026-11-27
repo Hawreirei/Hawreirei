@@ -1,7 +1,7 @@
 ---
 /**
  * "Show solution / Lihat pembahasan" toggle (issue #11). Accessible <details>.
- *   <Solution lang="id">…pembahasan…</Solution>
+ *   <Solution>…pembahasan…</Solution>          language comes from the page URL (/id/ or /en/)
  *   <Solution label="Hint">…</Solution>
  */
 import type { Lang } from '../i18n/ui';
@@ -11,7 +11,7 @@ interface Props {
   label?: string;
   open?: boolean;
 }
-const { lang = 'id', label, open = false } = Astro.props;
+const { lang = (Astro.currentLocale as Lang | undefined) ?? 'id', label, open = false } = Astro.props;
 const text = label ?? (lang === 'id' ? 'Lihat pembahasan' : 'Show solution');
 ---
 

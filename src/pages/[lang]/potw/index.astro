@@ -1,0 +1,98 @@
+---
+/** Problem of the Week: current problem + archive (issue #14). */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProblemView from '../../../components/ProblemView.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import InvertRow from '../../../components/InvertRow.astro';
+import type { Lang } from '../../../i18n/ui';
+import { langs, localizedPath } from '../../../i18n/utils';
+import { getProblems, weekOf, levelLabel, formatDate } from '../../../lib/potw';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const id = lang === 'id';
+const problems = await getProblems(lang);
+const [current, ...past] = problems;
+---
+
+<BaseLayout
+  lang={lang}
+  title={id ? 'Soal minggu ini' : 'Problem of the week'}
+  description={id
+    ? 'Satu soal matematika setiap minggu, lengkap dengan petunjuk dan pembahasan.'
+    : 'One math problem every week, with a hint and a worked solution.'}
+>
+  <section class="section page-head">
+    <div class="container">
+      <h1 class="display page-title" data-reveal>
+        <span class="reveal-mask"><span class="reveal-line" style="--i: 0">{id ? 'Soal' : 'Problem'}</span></span>
+        <span class="reveal-mask"><span class="reveal-line serif" style="--i: 1">{id ? 'minggu ini.' : 'of the week.'}</span></span>
+      </h1>
+      <p class="lead muted fade-up intro">
+        {
+          id
+            ? 'Satu soal setiap minggu. Coba dulu sendiri, buka petunjuk kalau buntu, lalu cek pembahasannya.'
+            : 'One problem every week. Try it yourself first, open the hint if you get stuck, then check the solution.'
+        }
+      </p>
+    </div>
+  </section>
+
+  {
+    current ? (
+      <section class="section" aria-label={id ? 'Soal minggu ini' : 'This week’s problem'}>
+        <div class="container">
+          <ProblemView problem={current} lang={lang} heading="h2" />
+        </div>
+      </section>
+    ) : (
+      <section class="section">
+        <div class="container">
+          <p class="muted">{id ? 'Soal pertama segera hadir.' : 'The first problem is coming soon.'}</p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    past.length > 0 && (
+      <section class="section" aria-labelledby="archive-title">
+        <div class="container">
+          <SectionHeader index="002" label={id ? 'Arsip' : 'Archive'} note={`${past.length} ${id ? 'soal' : past.length === 1 ? 'problem' : 'problems'}`} id="archive-title">
+            {id ? 'Soal ' : 'Past '}
+            <span class="serif">{id ? 'sebelumnya.' : 'problems.'}</span>
+          </SectionHeader>
+          <div class="archive">
+            {past.map((p) => (
+              <InvertRow
+                index={formatDate(p.data.date, lang)}
+                title={p.data.title}
+                meta={`${levelLabel(p.data.level, lang)}${p.data.sample ? (id ? ' · contoh' : ' · sample') : ''}`}
+                href={localizedPath(lang, `potw/${weekOf(p)}`)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: clamp(1.75rem, 10.5vw, 11rem);
+  }
+  .page-title .serif {
+    font-size: 1.05em;
+  }
+  .intro {
+    max-width: 46ch;
+    margin-top: var(--space-6);
+  }
+  /* the section header already draws the top line */
+  .archive {
+    margin-top: 0;
+  }
+</style>

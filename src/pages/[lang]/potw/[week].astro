@@ -1,0 +1,72 @@
+---
+/** A single Problem of the Week page, with previous / next (issue #14). */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProblemView from '../../../components/ProblemView.astro';
+import type { Lang } from '../../../i18n/ui';
+import { langs, localizedPath } from '../../../i18n/utils';
+import { getProblems, weekOf, type Problem } from '../../../lib/potw';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of langs) {
+    const problems = await getProblems(lang);
+    problems.forEach((problem, i) => {
+      paths.push({
+        params: { lang, week: weekOf(problem) },
+        props: { problem, newer: problems[i - 1], older: problems[i + 1] },
+      });
+    });
+  }
+  return paths;
+}
+
+interface Props {
+  problem: Problem;
+  newer?: Problem;
+  older?: Problem;
+}
+const lang = Astro.params.lang as Lang;
+const { problem, newer, older } = Astro.props;
+const id = lang === 'id';
+---
+
+<BaseLayout lang={lang} title={`${problem.data.title} · ${id ? 'Soal minggu ini' : 'Problem of the week'}`}>
+  <section class="section">
+    <div class="container">
+      <a class="back mono" href={localizedPath(lang, 'potw')}>← {id ? 'Semua soal' : 'All problems'}</a>
+      <ProblemView problem={problem} lang={lang} heading="h1" />
+      <nav class="pager mono" aria-label={id ? 'Soal lain' : 'Other problems'}>
+        {older ? <a href={localizedPath(lang, `potw/${weekOf(older)}`)}>← {older.data.title}</a> : <span />}
+        {newer && <a href={localizedPath(lang, `potw/${weekOf(newer)}`)}>{newer.data.title} →</a>}
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .back {
+    display: inline-block;
+    margin-bottom: var(--space-7);
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--fg);
+  }
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-9);
+    padding-top: var(--space-5);
+    border-top: var(--hairline);
+  }
+  .pager a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .pager a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+</style>
