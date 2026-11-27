@@ -45,6 +45,11 @@ export function initCursor() {
     'pointermove',
     (e) => {
       if (e.pointerType !== 'mouse') return;
+      // Over an embedded iframe (Desmos, GeoGebra) the frame gets the events: hide our cursor
+      if ((e.target as Element | null)?.tagName === 'IFRAME') {
+        p.active = false;
+        return;
+      }
       if (!p.active) {
         s.x = e.clientX;
         s.y = e.clientY;
@@ -66,7 +71,11 @@ export function initCursor() {
     },
     { passive: true },
   );
-  document.addEventListener('pointerleave', () => (p.active = false));
+  // Hide when the pointer leaves the window or moves into an iframe
+  document.addEventListener('mouseout', (e) => {
+    const to = e.relatedTarget as Element | null;
+    if (!to || to.tagName === 'IFRAME') p.active = false;
+  });
   addEventListener('pointerdown', () => (pressed = true));
   addEventListener('pointerup', () => (pressed = false));
 

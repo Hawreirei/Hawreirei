@@ -1,0 +1,24 @@
+---
+/**
+ * GeoGebra applet, click-to-load (issue #11).
+ *   <GeoGebra id="abc12345" title="Angles in a triangle" />   a published material (id from geogebra.org/m/<id>)
+ *   <GeoGebra app="geometry" title="Geometry" />              an empty app: graphing · geometry · 3d · classic
+ */
+import Embed from './Embed.astro';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  id?: string;
+  app?: 'graphing' | 'geometry' | '3d' | 'classic';
+  title: string;
+  lang?: Lang;
+  ratio?: string;
+}
+const { id, app = 'graphing', title, lang, ratio } = Astro.props;
+const src = id
+  ? `https://www.geogebra.org/material/iframe/id/${encodeURIComponent(id)}`
+  : `https://www.geogebra.org/${app}?embed`;
+const open = id ? `https://www.geogebra.org/m/${encodeURIComponent(id)}` : `https://www.geogebra.org/${app}`;
+---
+
+<Embed src={src} open={open} title={title} provider="GeoGebra" lang={lang} ratio={ratio} />

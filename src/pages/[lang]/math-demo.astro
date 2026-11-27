@@ -1,0 +1,37 @@
+---
+/** Math rendering demo (issue #11). noindex, not linked. Proves the MDX + KaTeX pipeline and math components. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BracketLabel from '../../components/BracketLabel.astro';
+import Math from '../../components/Math.astro';
+import Demo from '../../demos/math.mdx';
+import '../../styles/math.css';
+import type { Lang } from '../../i18n/ui';
+import { langs } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+---
+
+<BaseLayout lang={lang} title="Math demo" noindex>
+  <section class="section">
+    <div class="container prose-wrap">
+      <BracketLabel index="000" text="Math rendering · KaTeX" />
+      <h1 class="h2" style="margin-block: 1.5rem 2rem">Math <span class="serif">demo.</span></h1>
+      <p class="lead muted">
+        Component in a page: <Math tex={String.raw`e^{i\pi} + 1 = 0`} /> and a display block:
+      </p>
+      <Math tex={String.raw`f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}`} display />
+      <article class="prose">
+        <Demo lang={lang} />
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose-wrap {
+    max-width: 52rem;
+  }
+</style>

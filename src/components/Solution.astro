@@ -1,0 +1,60 @@
+---
+/**
+ * "Show solution / Lihat pembahasan" toggle (issue #11). Accessible <details>.
+ *   <Solution lang="id">…pembahasan…</Solution>
+ *   <Solution label="Hint">…</Solution>
+ */
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang?: Lang;
+  label?: string;
+  open?: boolean;
+}
+const { lang = 'id', label, open = false } = Astro.props;
+const text = label ?? (lang === 'id' ? 'Lihat pembahasan' : 'Show solution');
+---
+
+<details class="solution" open={open}>
+  <summary class="mono" data-cursor="?">
+    <span>{text}</span>
+    <span class="plus" aria-hidden="true">+</span>
+  </summary>
+  <div class="solution-body">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .solution {
+    margin-block: var(--space-5);
+    border-top: var(--hairline);
+    border-bottom: var(--hairline);
+  }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--space-4);
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .plus {
+    font-size: 1.25rem;
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .solution[open] .plus {
+    transform: rotate(45deg);
+  }
+  .solution-body {
+    padding-bottom: var(--space-5);
+    max-width: 62ch;
+    line-height: 1.7;
+  }
+  .solution-body > :global(:first-child) {
+    margin-top: 0;
+  }
+</style>

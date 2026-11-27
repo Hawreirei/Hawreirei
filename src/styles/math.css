@@ -1,0 +1,33 @@
+/*
+ * Math styling (issue #11): KaTeX stylesheet + VOID / 01 tweaks.
+ * KaTeX uses currentColor, so formulas follow the paper/void theme automatically.
+ * Imported by <Math>, and by any page that renders Markdown/MDX math.
+ */
+@import 'katex/dist/katex.min.css';
+
+.katex {
+  font-size: 1.08em;
+}
+/* Display math: centred block that scrolls sideways on narrow phones instead of overflowing */
+.math-display,
+.katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+.math-display {
+  margin-block: var(--space-5);
+  padding-block: var(--space-2);
+}
+.katex-display {
+  margin: 0;
+  padding-block: 0.25em;
+}
+/* invalid TeX stays readable instead of breaking the page */
+.katex-error {
+  color: var(--muted) !important;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  border-bottom: 1px dashed currentColor;
+}

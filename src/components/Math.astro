@@ -1,0 +1,34 @@
+---
+/**
+ * Render a TeX formula at build time with KaTeX (no client JS).
+ *
+ * ALWAYS pass TeX with String.raw — a plain "…" attribute treats backslashes as JS escapes
+ * (\to → tab, \frac → form feed), which silently breaks the formula:
+ *   <Math tex={String.raw`x^2 + y^2 = r^2`} />                 inline
+ *   <Math tex={String.raw`\int_0^1 x\,dx`} display />          display block
+ *
+ * In Markdown/MDX files just write $…$ and $$…$$ instead (see src/lib/satteri-katex.mjs).
+ */
+import katex from 'katex';
+import '../styles/math.css';
+
+interface Props {
+  tex: string;
+  display?: boolean;
+  class?: string;
+}
+const { tex, display = false, class: className } = Astro.props;
+// Catch the classic mistake at build time instead of shipping a broken formula.
+if (/[\t\f\b\v]/.test(tex)) {
+  throw new Error(`<Math>: TeX "${tex.slice(0, 40)}…" contains a control character — pass it with tex={String.raw\`…\`}`);
+}
+const html = katex.renderToString(tex, {
+  displayMode: display,
+  throwOnError: false,
+  output: 'htmlAndMathml',
+  strict: 'ignore',
+});
+const Tag = display ? 'div' : 'span';
+---
+
+<Tag class:list={[display ? 'math-display' : 'math-inline', className]} set:html={html} />

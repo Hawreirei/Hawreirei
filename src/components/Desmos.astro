@@ -1,0 +1,20 @@
+---
+/**
+ * Desmos graph, click-to-load (issue #11).
+ *   <Desmos id="abcd1234ef" title="Parabola y = x²" />   a saved graph (id from its desmos.com URL)
+ *   <Desmos title="Graphing calculator" />                 empty calculator
+ */
+import Embed from './Embed.astro';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  id?: string;
+  title: string;
+  lang?: Lang;
+  ratio?: string;
+}
+const { id, title, lang, ratio } = Astro.props;
+const base = `https://www.desmos.com/calculator${id ? `/${encodeURIComponent(id)}` : ''}`;
+---
+
+<Embed src={`${base}?embed`} open={base} title={title} provider="Desmos" lang={lang} ratio={ratio} />

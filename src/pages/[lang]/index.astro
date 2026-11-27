@@ -13,6 +13,7 @@ import BracketLabel from '../../components/BracketLabel.astro';
 import InvertRow from '../../components/InvertRow.astro';
 import Marquee from '../../components/Marquee.astro';
 import Portrait from '../../components/Portrait.astro';
+import Math from '../../components/Math.astro';
 import type { Lang } from '../../i18n/ui';
 import { langs, useTranslations, localizedPath } from '../../i18n/utils';
 import { programmes, stats } from '../../data/programmes';
@@ -260,15 +261,23 @@ const chipPos = ['c1', 'c2', 'c3', 'c4', 'c5'];
             {
               id ? (
                 <p>
-                  Angka satuan pangkat 7 berulang setiap 4: 7, 9, 3, 1, 7, 9, … Karena 2026 = 4 · 506 + 2, angka satuannya sama
-                  dengan 7² = 49. <strong>Jawaban: 9.</strong>
+                  Angka satuan <Math tex={String.raw`7^n`} /> berulang setiap 4: <Math tex={String.raw`7, 9, 3, 1, 7, 9, \dots`} />{' '}
+                  Karena <Math tex={String.raw`2026 = 4 \cdot 506 + 2`} />, angka satuannya sama dengan{' '}
+                  <Math tex={String.raw`7^2 = 49`} />.
                 </p>
               ) : (
                 <p>
-                  The last digits of powers of 7 repeat every 4: 7, 9, 3, 1, 7, 9, … Since 2026 = 4 · 506 + 2, the last digit is the
-                  same as for 7² = 49. <strong>Answer: 9.</strong>
+                  The last digits of <Math tex={String.raw`7^n`} /> repeat every 4: <Math tex={String.raw`7, 9, 3, 1, 7, 9, \dots`} />{' '}
+                  Since <Math tex={String.raw`2026 = 4 \cdot 506 + 2`} />, the last digit is the same as for{' '}
+                  <Math tex={String.raw`7^2 = 49`} />.
                 </p>
               )
+            }
+            <Math tex={String.raw`7^{2026} \equiv 7^{2} \equiv 9 \pmod{10}`} display />
+            {
+              <p>
+                <strong>{id ? 'Jawaban: 9.' : 'Answer: 9.'}</strong>
+              </p>
             }
           </div>
         </details>

@@ -1,0 +1,127 @@
+---
+/**
+ * Click-to-load iframe for heavy third-party math tools (Desmos, GeoGebra), issue #11.
+ * Nothing is loaded from the third party until the visitor asks. Without JS the
+ * button is a normal link that opens the tool in a new tab.
+ */
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  src: string;
+  open: string;
+  title: string;
+  provider: string;
+  lang?: Lang;
+  ratio?: string;
+}
+const { src, open, title, provider, lang = 'id', ratio = '16 / 10' } = Astro.props;
+const id = lang === 'id';
+---
+
+<figure class="embed" style={`--ratio: ${ratio}`}>
+  <div class="embed-frame" data-embed-frame>
+    <a class="embed-load" href={open} target="_blank" rel="noopener" data-embed-src={src} data-embed-title={title} data-cursor="PLAY">
+      <span class="embed-provider label">{provider}</span>
+      <span class="embed-cta">
+        <span class="embed-play" aria-hidden="true">▶</span>
+        {id ? 'Muat grafik interaktif' : 'Load interactive graph'}
+      </span>
+      <span class="embed-note label">{id ? `Memuat konten dari ${provider}` : `Loads content from ${provider}`}</span>
+    </a>
+  </div>
+  <figcaption class="label embed-cap">
+    <span>{title}</span>
+    <a href={open} target="_blank" rel="noopener">{id ? 'Buka di tab baru' : 'Open in new tab'} ↗</a>
+  </figcaption>
+</figure>
+
+<style>
+  .embed {
+    margin: var(--space-6) 0;
+  }
+  .embed-frame {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    border: var(--hairline);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(color-mix(in srgb, var(--fg) 6%, transparent) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, color-mix(in srgb, var(--fg) 6%, transparent) 1px, transparent 1px) 0 0 / 28px 28px,
+      var(--surface);
+  }
+  .embed-frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+  }
+  .embed-load {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    color: var(--fg);
+    text-align: center;
+    text-decoration: none;
+  }
+  .embed-provider {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+  }
+  .embed-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0.9rem 1.4rem;
+    border: 1px solid var(--fg);
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    font-weight: 500;
+    transition:
+      background-color var(--dur-base) ease,
+      color var(--dur-base) ease;
+  }
+  .embed-load:hover .embed-cta,
+  .embed-load:focus-visible .embed-cta {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .embed-play {
+    font-size: 0.75em;
+  }
+  .embed-cap {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+  .embed-cap a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('[data-embed-src]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const frame = link.closest('[data-embed-frame]');
+      if (!frame) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = link.dataset.embedSrc ?? '';
+      iframe.title = link.dataset.embedTitle ?? '';
+      iframe.allow = 'fullscreen';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      frame.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>
