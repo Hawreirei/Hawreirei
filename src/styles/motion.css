@@ -234,7 +234,8 @@ html:not(.js) .fade-up {
 
 /* ---------- Scroll-fill paragraph ([data-fill]) ---------- */
 .fill .fw {
-  color: color-mix(in srgb, var(--muted) 55%, transparent);
+  /* not-yet-lit words stay readable: ≥3.3:1 on paper and void (WCAG large text) */
+  color: color-mix(in srgb, var(--muted) 80%, var(--bg));
   transition: color 0.35s ease;
 }
 .fill .fw.on {

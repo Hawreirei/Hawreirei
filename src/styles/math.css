@@ -8,13 +8,18 @@
 .katex {
   font-size: 1.08em;
 }
-/* Display math: centred block that scrolls sideways on narrow phones instead of overflowing */
-.math-display,
-.katex-display {
+/* Display math: centred block that scrolls sideways on narrow phones instead of overflowing.
+   Only the outer .math-display scrolls; a11y.ts makes it keyboard-focusable when it overflows. */
+.math-display {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
+}
+.math-display[tabindex]:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+  border-radius: var(--radius);
 }
 .math-display {
   margin-block: var(--space-5);
@@ -23,6 +28,7 @@
 .katex-display {
   margin: 0;
   padding-block: 0.25em;
+  overflow: visible;
 }
 /* invalid TeX stays readable instead of breaking the page */
 .katex-error {

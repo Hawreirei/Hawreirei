@@ -15,10 +15,10 @@ const t = useTranslations(Astro.props.lang);
   data-theme-toggle
   data-label-light={t('theme.light')}
   data-label-dark={t('theme.dark')}
-  aria-label={t('theme.toggle')}
-  aria-pressed="false"
 >
   <span class="tt-dot" aria-hidden="true"></span>
+  <!-- accessible name = context + the visible word, so voice control ("click Gelap") works -->
+  <span class="sr-only">{t('theme.toggle')}: </span>
   <span class="tt-text">{t('theme.dark')}</span>
 </button>
 
@@ -54,7 +54,6 @@ const t = useTranslations(Astro.props.lang);
   function sync() {
     const dark = document.documentElement.dataset.theme === 'dark';
     document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) => {
-      btn.setAttribute('aria-pressed', String(dark));
       const text = btn.querySelector('.tt-text');
       // Label shows the theme you will switch TO
       if (text) text.textContent = (dark ? btn.dataset.labelLight : btn.dataset.labelDark) ?? '';

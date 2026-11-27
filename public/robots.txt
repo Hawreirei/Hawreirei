@@ -1,0 +1,13 @@
+# Crawlers only read robots.txt at the domain root. While the site lives at
+# hawreirei.github.io/Hawreirei/ this file is informational; it takes effect
+# once the custom domain (issue #17) serves the site from the root.
+User-agent: *
+Allow: /
+Disallow: /Hawreirei/id/styleguide/
+Disallow: /Hawreirei/en/styleguide/
+Disallow: /Hawreirei/id/preview/
+Disallow: /Hawreirei/en/preview/
+Disallow: /Hawreirei/id/math-demo/
+Disallow: /Hawreirei/en/math-demo/
+
+Sitemap: https://hawreirei.github.io/Hawreirei/sitemap-index.xml

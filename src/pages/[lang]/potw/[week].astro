@@ -4,7 +4,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ProblemView from '../../../components/ProblemView.astro';
 import type { Lang } from '../../../i18n/ui';
 import { langs, localizedPath } from '../../../i18n/utils';
-import { getProblems, weekOf, type Problem } from '../../../lib/potw';
+import { getProblems, weekOf, levelLabel, type Problem } from '../../../lib/potw';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -28,9 +28,24 @@ interface Props {
 const lang = Astro.params.lang as Lang;
 const { problem, newer, older } = Astro.props;
 const id = lang === 'id';
+const description = id
+  ? `${problem.data.title} — soal matematika ${levelLabel(problem.data.level, lang)} minggu ini, lengkap dengan petunjuk dan pembahasan.`
+  : `${problem.data.title} — ${/^[aeiou]/i.test(levelLabel(problem.data.level, lang)) ? 'an' : 'a'} ${levelLabel(problem.data.level, lang)} math problem of the week, with a hint and a worked solution.`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  name: problem.data.title,
+  learningResourceType: id ? 'Soal latihan' : 'Practice problem',
+  educationalLevel: levelLabel(problem.data.level, lang),
+  inLanguage: lang,
+  datePublished: problem.data.date.toISOString().slice(0, 10),
+  isAccessibleForFree: true,
+  description,
+  author: { '@type': 'Person', name: 'Itman Arif Hariri' },
+};
 ---
 
-<BaseLayout lang={lang} title={`${problem.data.title} · ${id ? 'Soal minggu ini' : 'Problem of the week'}`}>
+<BaseLayout lang={lang} title={`${problem.data.title} · ${id ? 'Soal minggu ini' : 'Problem of the week'}`} description={description} jsonLd={jsonLd}>
   <section class="section">
     <div class="container">
       <a class="back mono" href={localizedPath(lang, 'potw')}>← {id ? 'Semua soal' : 'All problems'}</a>

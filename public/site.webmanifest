@@ -1,0 +1,13 @@
+{
+  "name": "Itman Arif Hariri — Math Teacher",
+  "short_name": "Itman Arif",
+  "start_url": "/Hawreirei/",
+  "scope": "/Hawreirei/",
+  "display": "browser",
+  "background_color": "#fbf9f3",
+  "theme_color": "#161412",
+  "icons": [
+    { "src": "/Hawreirei/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/Hawreirei/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

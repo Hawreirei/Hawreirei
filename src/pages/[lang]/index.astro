@@ -55,9 +55,39 @@ const steps = id
 
 const chipPos = ['c1', 'c2', 'c3', 'c4', 'c5'];
 const [latestProblem] = await getProblems(lang);
+
+// Structured data: who this site is about (schema.org Person + WebSite).
+const site = Astro.site ?? new URL('https://hawreirei.github.io');
+const home = new URL(localizedPath(lang), site).href;
+const personId = new URL(`${import.meta.env.BASE_URL}#person`, site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Itman Arif Hariri',
+      jobTitle: id ? 'Guru Matematika' : 'Math Teacher',
+      url: home,
+      image: new URL(`${import.meta.env.BASE_URL}og/og-${lang}.png`, site).href,
+      email: 'mailto:arifhariri2@gmail.com',
+      knowsAbout: ['Mathematics', 'Pearson Edexcel', 'Mathematical olympiad', 'UTBK', 'TKA', 'CASN', 'GeoGebra', 'Desmos', 'LaTeX'],
+      knowsLanguage: ['id', 'en'],
+      address: { '@type': 'PostalAddress', addressCountry: 'ID' },
+      sameAs: ['https://github.com/Hawreirei'],
+    },
+    {
+      '@type': 'WebSite',
+      url: home,
+      name: 'Itman Arif Hariri',
+      inLanguage: lang,
+      publisher: { '@id': personId },
+    },
+  ],
+};
 ---
 
-<BaseLayout lang={lang}>
+<BaseLayout lang={lang} jsonLd={jsonLd}>
   <Hero lang={lang} variant={HERO_VARIANT} />
 
   <!-- Tools band -->

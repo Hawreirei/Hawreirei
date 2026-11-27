@@ -11,20 +11,27 @@ import SiteFooter from '../components/SiteFooter.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
 import SideDock from '../components/SideDock.astro';
 import type { Lang } from '../i18n/ui';
-import { langs, useTranslations, switchLangPath } from '../i18n/utils';
+import { langs, useTranslations, switchLangPath, asset } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
   title?: string;
   description?: string;
   noindex?: boolean;
+  /** Social preview image path inside /public (default: the per-language card). */
+  image?: string;
+  /** Structured data (schema.org JSON-LD) for this page. */
+  jsonLd?: Record<string, unknown>;
 }
 
-const { lang, title, description, noindex = false } = Astro.props;
+const { lang, title, description, noindex = false, image, jsonLd } = Astro.props;
 const t = useTranslations(lang);
 const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
 const pageDescription = description ?? t('site.description');
 const site = Astro.site ?? new URL('https://hawreirei.github.io');
+const canonical = new URL(Astro.url.pathname, site);
+const ogImage = new URL(asset(image ?? `og/og-${lang}.png`), site);
+const ogLocale = { id: 'id_ID', en: 'en_US' } as const;
 ---
 
 <!doctype html>
@@ -35,7 +42,7 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     {noindex && <meta name="robots" content="noindex" />}
-    <link rel="canonical" href={new URL(Astro.url.pathname, site)} />
+    <link rel="canonical" href={canonical} />
     {
       langs.map((l) => (
         <link rel="alternate" hreflang={l} href={new URL(switchLangPath(Astro.url, l), site)} />
@@ -45,6 +52,30 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
     <meta name="theme-color" content="#fbf9f3" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)" />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Icons -->
+    <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={asset('favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('site.webmanifest')} />
+
+    <!-- Social previews (Open Graph / Twitter) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Itman Arif Hariri" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t('site.title')} />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    <meta property="og:locale:alternate" content={ogLocale[lang === 'id' ? 'en' : 'id']} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <script is:inline>
       // Theme before first paint: saved choice → device setting → white.
       try {
@@ -86,6 +117,7 @@ const site = Astro.site ?? new URL('https://hawreirei.github.io');
 
     <script>
       import '../scripts/motion/index.ts';
+      import '../scripts/a11y.ts';
     </script>
     <script>
       // Remember the visitor's language choice for the root redirect.

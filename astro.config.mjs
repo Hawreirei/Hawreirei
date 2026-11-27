@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 import { satteri } from '@astrojs/markdown-satteri';
 import { katexPlugin } from './src/lib/satteri-katex.mjs';
 
@@ -23,5 +24,13 @@ export default defineConfig({
   markdown: {
     processor: satteri({ features: { math: true }, hastPlugins: [katexPlugin] }),
   },
-  integrations: [mdx()],
+  integrations: [
+    mdx(),
+    // Sitemap of public pages only (issue #15). Test/preview pages and the root redirect are left out.
+    sitemap({
+      filter: (page) =>
+        !/\/(styleguide|preview|math-demo)\//.test(page) && !/\/404\/?$/.test(page) && !/\/Hawreirei\/$/.test(page),
+      i18n: { defaultLocale: 'id', locales: { id: 'id-ID', en: 'en-US' } },
+    }),
+  ],
 });
